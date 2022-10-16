@@ -4,18 +4,20 @@
 	</head>
 	<body>
 		<div id="vue-app">
-			There is a table named t with columns a and b. <br/><br/>
+			<div v-if="state === 'demo'">
+				There is a table named t with columns a and b. <br/><br/>
 
-			<form method="get" action="/query">
-				Type a query here: <input name="query"/>
-				<button>Execute Query</button>
-			</form>
+				<form method="get" action="/query">
+					Type a query here: <input name="query"/>
+					<button>Execute Query</button>
+				</form>
 
-			<!--
-			<form method="get" action="/reset">
-				<button>Reset table</button>
-			</form>
-			-->
+				<!--
+				<form method="get" action="/reset">
+					<button>Reset table</button>
+				</form>
+				-->
+			</div>
 		</div>
 
 		<style>

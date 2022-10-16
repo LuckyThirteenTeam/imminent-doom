@@ -8,7 +8,7 @@ class VueApp {
         this.#app = Vue.createApp({
             data() {
                 return {
-                    state: 'default'
+                    state: 'demo'
                 }
             }
         });
