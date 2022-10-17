@@ -7,22 +7,47 @@
 			<div v-if="state === 'demo'">
 				There is a table named t with columns a and b. <br/><br/>
 
-				<form method="get" action="/query">
-					Type a query here: <input name="query"/>
-					<button>Execute Query</button>
-				</form>
+				Type a query here: <input v-model="inDemoQuery"/>
+				<button @click="getDemoQuery(inDemoQuery)">Execute Query</button>
 
-				<!--
-				<form method="get" action="/reset">
-					<button>Reset table</button>
-				</form>
-				-->
+				<div>Query Result:</div>
+				<table>
+					<tbody>
+						<tr v-for="row in demoQueryData">
+							<td v-for="data in row">{{ data }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+
+				<div>Current state of t:</div>
+				<table>
+					<thead>
+						<tr>
+							<td>a</td>
+							<td>b</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="row in demoCurrentStateData">
+							<td v-for="data in row">{{ data }}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 
 		<style>
 			body {
 				font-size: 20px;
+			}
+
+			td {
+				border: 1px solid black; padding: 10px;
+			}
+			
+			thead td {
+				font-weight: bold;
 			}
 		</style>
 
