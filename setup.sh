@@ -1,3 +1,4 @@
+#!/bin/bash
 echo 'Installing dependencies'
 sleep 1
 sudo apt-get install mysql-server
