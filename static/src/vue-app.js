@@ -16,7 +16,8 @@ class VueApp {
                     coldestLocations: [],
                     inDemoQuery: '',
                     inHCLDate: null,
-                    inHCLCount: 0
+                    inHCLCount: 0,
+                    showHCLocations: false
                 }
             },
             methods: {
@@ -31,6 +32,7 @@ class VueApp {
                     .then((data) => {
                         this.hottestLocations = data[0];
                         this.coldestLocations = data[1];
+                        this.showHCLocations = true;
                     });
                 }
             },

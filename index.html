@@ -7,11 +7,50 @@
 			<div v-if="state === 'real'">
 				<div>
 					<div>Hottest and Coldest Locations by Date</div>
+
 					<div>
 						<input type="date" v-model="inHCLDate">
 						<input type="number" v-model="inHCLCount">
 						<button @click="getHotAndColdLocations(inHCLDate, inHCLCount)">Submit</button>
 					</div>
+
+					<div v-if="showHCLocations">
+						<div>
+							<div>Hottest Locations</div>
+							<table>
+								<thead>
+									<tr>
+										<td>Location</td>
+										<td>Country</td>
+										<td>Temperature</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="row in hottestLocations">
+										<td v-for="data in row">{{ data }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div>
+							<div>Coldest Locations</div>
+							<table>
+								<thead>
+									<tr>
+										<td>Location</td>
+										<td>Country</td>
+										<td>Temperature</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="row in coldestLocations">
+										<td v-for="data in row">{{ data }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					
 				</div>
 			</div>
 			<div v-if="state === 'demo'">
