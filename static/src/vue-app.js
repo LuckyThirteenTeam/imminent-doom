@@ -21,6 +21,12 @@ class VueApp {
                     .then((data) => {
                         this.demoQueryData = data;
                     });
+                },
+                getHotAndColdLocations(dt, count) {
+                    Controller.getHotAndColdLocations(dt, count)
+                    .then((data) => {
+                        console.log(data);
+                    });
                 }
             },
             mounted() {
