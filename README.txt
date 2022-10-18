@@ -26,17 +26,29 @@ These instructions are written for Ubuntu but should work fine with any Linux/Ma
 5. Install Flask
 	a. Switch to a non-root user
 	b. pip3 install Flask
+6. [SERVER ONLY] Install and setup NGINX
+	a. sudo apt install nginx
+	b. sudo ufw allow 'Nginx HTTP'
+	c. sudo cp /etc/nginx/nginx.conf /home/user/default_nginx.conf
+	c. sudo cp nginx.conf /etc/nginx/nginx.conf
 
-===============
-    Running    
-===============
+========================
+    Running Locally   
+========================
 1. Make sure you are in the folder with app.py and index.html
 2. flask --app app run
-3. If on a remote server with an IP address, run
-	flask --app app run -h [ip address]
-4. The program runs by deault on port 5000
+3. The app will run on 127.0.0.1:5000
+
+
+========================
+    Running on Server   
+========================
+1. Make sure you are in the folder with app.py and index.html
+2. sudo nginx -s reload
+3. flask --app app run -h [ip address]
+4. The app will run on 127.0.0.1:5000 which should be accessible through http://143.198.181.16/
 
 ================
       Demo    
 ================
-1. Go to http://143.198.181.16:5000/
+1. Go to http://143.198.181.16/
