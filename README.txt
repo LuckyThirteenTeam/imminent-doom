@@ -17,8 +17,9 @@ These instructions are written for Ubuntu but should work fine with any Linux/Ma
 	b. CREATE USER 'user'@'127.0.0.1' IDENTIFIED BY 'password';
 	c. GRANT ALL PRIVILEGES ON *.* TO 'user'@'127.0.0.1' WITH GRANT OPTION;
 	d. CREATE DATABASE test;
-	e. CREATE TABLE t (a INTEGER, b INTEGER);
-	f. INSERT INTO t VALUES (1, 2), (3, 4), (5, 6), (7, 8)
+	e. USE test;
+	f. CREATE TABLE t (a INTEGER, b INTEGER);
+	g. INSERT INTO t VALUES (1, 2), (3, 4), (5, 6), (7, 8)
 5. Install Flask
 	a. Switch to a non-root user
 	b. pip3 install Flask
