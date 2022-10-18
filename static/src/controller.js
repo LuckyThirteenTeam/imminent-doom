@@ -9,18 +9,20 @@ class Controller {
 
     static getHotAndColdLocations(dt, count) {
         // TODO: Implement query
-        return [
+        return Promise.resolve(
             [
-                ['Hell Station', 'Hell', 666], 
-                ['Me', 'CA', 80], 
-                ['Some Place', 'US', 73]
-            ],
-            [
-                ['Pingu House', 'CA', -30], 
-                ['My Fridge', 'CA', 5], 
-                ['Another Place', 'AU', 6]
+                [
+                    ['Hell Station', 'Hell', 666], 
+                    ['Me', 'CA', 80], 
+                    ['Some Place', 'US', 73]
+                ],
+                [
+                    ['Pingu House', 'CA', -30], 
+                    ['My Fridge', 'CA', 5], 
+                    ['Another Place', 'AU', 6]
+                ]
             ]
-        ];
+        );
     }
 }
 

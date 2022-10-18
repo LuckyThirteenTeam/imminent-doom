@@ -9,10 +9,14 @@ class VueApp {
         this.#app = Vue.createApp({
             data() {
                 return {
-                    state: 'demo',
+                    state: 'real',
                     demoCurrentStateData: [],
                     demoQueryData: [],
+                    hottestLocations: [],
+                    coldestLocations: [],
                     inDemoQuery: '',
+                    inHCLDate: null,
+                    inHCLCount: 0
                 }
             },
             methods: {
@@ -25,7 +29,8 @@ class VueApp {
                 getHotAndColdLocations(dt, count) {
                     Controller.getHotAndColdLocations(dt, count)
                     .then((data) => {
-                        console.log(data);
+                        this.hottestLocations = data[0];
+                        this.coldestLocations = data[1];
                     });
                 }
             },
