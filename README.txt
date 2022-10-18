@@ -46,9 +46,9 @@ These instructions are written for Ubuntu but should work fine with any Linux/Ma
 1. Make sure you are in the folder with app.py and index.html
 2. sudo nginx -s reload
 3. flask --app app run -h [ip address]
-4. The app will run on 127.0.0.1:5000 which should be accessible through http://143.198.181.16/
+4. The app will run on 127.0.0.1:5000 which should be accessible through http://143.198.181.16/ or http://imminent-doom.ml/
 
 ================
       Demo    
 ================
-1. Go to http://143.198.181.16/
+1. Go to http://143.198.181.16/ or http://imminent-doom.ml/
