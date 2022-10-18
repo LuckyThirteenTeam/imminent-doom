@@ -3,6 +3,7 @@ echo 'Installing dependencies'
 sleep 1
 sudo apt-get install mysql-server
 sudo apt-get install python3-pip
+sudo apt-get install nginx
 
 echo 'Installing Python dependencies'
 sleep 1
