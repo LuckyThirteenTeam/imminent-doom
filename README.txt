@@ -19,7 +19,7 @@ These instructions are written for Ubuntu but should work fine with any Linux/Ma
 	d. CREATE DATABASE test;
 	e. USE test;
 	f. CREATE TABLE t (a INTEGER, b INTEGER);
-	g. INSERT INTO t VALUES (1, 2), (3, 4), (5, 6), (7, 8)
+	g. INSERT INTO t VALUES (1, 2), (3, 4), (5, 6), (7, 8);
 5. Install Flask
 	a. Switch to a non-root user
 	b. pip3 install Flask
