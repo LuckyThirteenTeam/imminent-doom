@@ -2,6 +2,9 @@
   Installation
 ================
 
+If you are on Linux, you can just run "source setup.sh".
+
+
 These instructions are written for Ubuntu but should work fine with any Linux/Mac computer.
 
 1. Install MySql
