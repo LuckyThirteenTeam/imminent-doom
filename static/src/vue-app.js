@@ -10,6 +10,7 @@ class VueApp {
             data() {
                 return {
                     state: 'real',
+                    panelState: 1, // Temporarily set to 1, until nearby stations feature is implemented
                     demoCurrentStateData: [],
                     demoQueryData: [],
                     hottestLocations: [],
@@ -17,7 +18,8 @@ class VueApp {
                     inDemoQuery: '',
                     inHCLDate: null,
                     inHCLCount: 0,
-                    showHCLocations: false
+                    userLocation: '',
+                    displayInfo: false
                 }
             },
             methods: {
@@ -32,7 +34,23 @@ class VueApp {
                     .then((data) => {
                         this.hottestLocations = data[0];
                         this.coldestLocations = data[1];
-                        this.showHCLocations = true;
+                        this.displayInfo = true;
+                    });
+                },
+                getNearbyStationsQuery(lat, lng) {
+                    const uluru = { lat: -25.344, lng: 131.031 };
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 4,
+                      center: uluru,
+                    });
+                    Controller.getNearbyStationsQuery(lat, lng)
+                    .then((data) => {
+                        for (let i = 0; i < data.length; i++) {
+                            new google.maps.Marker({
+                                position: data[i],
+                                map: map,
+                            });
+                        }
                     });
                 }
             },

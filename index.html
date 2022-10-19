@@ -1,105 +1,122 @@
 <html>
 	<head>
 		<title>Imminent Doom</title>
+		<link rel="stylesheet" href="./static/index.css" type="text/css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/5a5c6dd537.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<div id="vue-app">
-			<div v-if="state === 'real'">
+			<!-- Map -->
+			<div id="map">
+			</div>
+			<component :is="'script'"
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUySiV1nXrIO_Ed7Xe1ScguALOM09Fqz8&callback=initMap&v=weekly"
+				defer
+			></component>
+
+			<!-- Query panel -->
+			<div class="panel">
+				<div class="panel-buttons">
+					<button @click="panelState = 0" class="button" v-bind:class="{ active: panelState === 0 'temp-disabled': true }">
+						<i class="fa fa-xl fa-solid fa-location-arrow"></i>
+						Location
+					</button>
+					<button @click="panelState = 1" class="button" v-bind:class="{ active: panelState === 1 }">
+						<i class="fa fa-xl fa-solid fa-thermometer"></i>
+						Hot/Cold
+					</button>
+					<button @click="panelState = 2" class="button" v-bind:class="{ active: panelState === 2, 'temp-disabled': true }">
+						<i class="fa fa-xl fa-solid fa-arrow-down-up-across-line"></i>
+						Anomalies
+					</button>
+					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3, 'temp-disabled': true }">
+						<i class="fa fa-xl fa-bookmark"></i>
+						Saved
+					</button>
+				</div>
 				<div>
-					<div>Hottest and Coldest Locations by Date</div>
-
-					<div>
-						<input type="date" v-model="inHCLDate">
-						<input type="number" v-model="inHCLCount">
-						<button @click="getHotAndColdLocations(inHCLDate, inHCLCount)">Submit</button>
-					</div>
-
-					<div v-if="showHCLocations">
-						<div>
-							<div>Hottest Locations</div>
-							<table>
-								<thead>
-									<tr>
-										<td>Location</td>
-										<td>Country</td>
-										<td>Temperature</td>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="row in hottestLocations">
-										<td v-for="data in row">{{ data }}</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div>
-							<div>Coldest Locations</div>
-							<table>
-								<thead>
-									<tr>
-										<td>Location</td>
-										<td>Country</td>
-										<td>Temperature</td>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="row in coldestLocations">
-										<td v-for="data in row">{{ data }}</td>
-									</tr>
-								</tbody>
-							</table>
+					<div class="panel-input-container" v-if="panelState === 0">
+						Enter a location to view nearby weather stations with historical climate data
+						<div class="panel-input-boxes">
+							<input class="panel-input input-location" type="text" v-model="userLocation">
+							<button class="panel-input-button" @click="getNearbyStationsQuery(122,122)">
+								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
+							</button>
 						</div>
 					</div>
-					
+					<div class="panel-input-container" v-if="panelState === 1">
+						Enter a date and the number of locations to view the hottest/coldest locations on that date
+						<div class="panel-input-boxes">
+							<input class="panel-input" type="date" v-model="inHCLDate">
+							<input class="panel-input input-num" type="number" v-model="inHCLCount">
+							<button class="panel-input-button" @click="getHotAndColdLocations(inHCLDate, inHCLCount)">
+								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
+							</button>
+						</div>
+					</div>
+					<div class="panel-input-container" v-if="panelState === 2">
+						Enter a date and the number of locations to view the locations with temperatures furthest from the average temperature on that date
+						<div class="panel-input-boxes">
+							<input class="panel-input" type="date" v-model="inHCLDate">
+							<input class="panel-input input-num" type="number" v-model="inHCLCount">
+							<button class="panel-input-button" @click="getHotAndColdLocations(inHCLDate, inHCLCount)">
+								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
+							</button>
+						</div>
+					</div>
+					<div class="panel-input-container" v-if="panelState === 3">
+						Manage saved weather stations
+					</div>
 				</div>
 			</div>
-			<div v-if="state === 'demo'">
-				There is a table named t with columns a and b. <br/><br/>
-
-				Type a query here: <input v-model="inDemoQuery"/>
-				<button @click="getDemoQuery(inDemoQuery)">Execute Query</button>
-
-				<div>Query Result:</div>
-				<table>
-					<tbody>
-						<tr v-for="row in demoQueryData">
-							<td v-for="data in row">{{ data }}</td>
-						</tr>
-					</tbody>
-				</table>
-				<br/>
-
-				<div>Current state of t:</div>
-				<table>
-					<thead>
-						<tr>
-							<td>a</td>
-							<td>b</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="row in demoCurrentStateData">
-							<td v-for="data in row">{{ data }}</td>
-						</tr>
-					</tbody>
-				</table>
+				
+			<!-- Info panel -->
+			<div class="panel bottom-panel" v-if="displayInfo">
+				<div v-if="state === 'real'">
+					<div>
+						<div class="header">Hottest Locations on {{ inHCLDate }}</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Rank</td>
+									<td>Location</td>
+									<td>Country</td>
+									<td>Temperature (°C)</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(row, index) in hottestLocations">
+									<td>{{ index + 1 }}</td>
+									<td v-for="data in row">{{ data }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="coldest">
+						<div class="header">Coldest Locations on {{ inHCLDate }}</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Rank</td>
+									<td>Location</td>
+									<td>Country</td>
+									<td>Temperature</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(row, index) in coldestLocations">
+									<td>{{ index + 1 }}</td>
+									<td v-for="data in row">{{ data }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
-
-		<style>
-			body {
-				font-size: 20px;
-			}
-
-			td {
-				border: 1px solid black; padding: 10px;
-			}
-			
-			thead td {
-				font-weight: bold;
-			}
-		</style>
-
-	<script type="module" src="static/main.js"></script>
+		<script type="module" src="static/main.js"></script>
 	</body>
 </html>
