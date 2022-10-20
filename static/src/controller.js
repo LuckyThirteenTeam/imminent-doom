@@ -8,24 +8,10 @@ class Controller {
     }
 
     static getHotAndColdLocations(dt, count) {
-        // Promise.all([fetch('http://imminent-doom.ml/query?query=SELECT * FROM Weather LIMIT 10'), fetch('http://imminent-doom.ml/query?query=SELECT * FROM Location LIMIT 10')])
-        // .then((v) => {
-        // })
-        // TODO: Implement query
-        return Promise.resolve(
-            [
-                [
-                    ['Hell Station', 'Hell', 666], 
-                    ['Me', 'CA', 80], 
-                    ['Some Place', 'US', 73]
-                ],
-                [
-                    ['Pingu House', 'CA', -30], 
-                    ['My Fridge', 'CA', 5], 
-                    ['Another Place', 'AU', 6]
-                ]
-            ]
-        );
+        return Promise.all([
+            fetch(`query?query=SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = ${dt} ORDER BY maxTemp DESC LIMIT ${count};`),
+            fetch(`query?query=SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = ${dt} ORDER BY minTemp ASC LIMIT ${count};`)
+        ])
     }
 
     static getNearbyStationsQuery(lat, lng) {

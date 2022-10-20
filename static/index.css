@@ -38,7 +38,6 @@ body {
 .button {
   border: 0;
   height: 60px;
-  width: 60px;
   background-color: transparent;
   display: flex;
   flex-direction: column;
