@@ -9,8 +9,8 @@ class Controller {
 
     static getHotAndColdLocations(dt, count) {
         return Promise.all([
-            fetch(`query?query=SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = ${dt} ORDER BY maxTemp DESC LIMIT ${count};`),
-            fetch(`query?query=SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = ${dt} ORDER BY minTemp ASC LIMIT ${count};`)
+            fetch(`query?query=SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY maxTemp DESC LIMIT ${count};`),
+            fetch(`query?query=SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY minTemp ASC LIMIT ${count};`)
         ])
     }
 
