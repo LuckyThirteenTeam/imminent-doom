@@ -11,11 +11,8 @@ class VueApp {
                 return {
                     state: 'real',
                     panelState: 1, // Temporarily set to 1, until nearby stations feature is implemented
-                    demoCurrentStateData: [],
-                    demoQueryData: [],
                     hottestLocations: [],
                     coldestLocations: [],
-                    inDemoQuery: '',
                     inHCLDate: null,
                     inHCLCount: 5,
                     userLocation: '',
@@ -23,13 +20,7 @@ class VueApp {
                 }
             },
             methods: {
-                getDemoQuery(query) {
-                    Controller.getDemoQuery(query)
-                    .then((data) => {
-                        this.demoQueryData = data;
-                    });
-                },
-                getHotAndColdLocations(dt, count) {
+                async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
                         alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
                     } else if (count < 5 || count > 100) {
