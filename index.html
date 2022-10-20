@@ -20,7 +20,7 @@
 			<!-- Query panel -->
 			<div class="panel">
 				<div class="panel-buttons">
-					<button @click="panelState = 0" class="button" v-bind:class="{ active: panelState === 0 'temp-disabled': true }">
+					<button @click="panelState = 0" class="button" v-bind:class="{ active: panelState === 0, 'temp-disabled': true }">
 						<i class="fa fa-xl fa-solid fa-location-arrow"></i>
 						Location
 					</button>
