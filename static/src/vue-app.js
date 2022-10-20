@@ -30,18 +30,22 @@ class VueApp {
                     });
                 },
                 getHotAndColdLocations(dt, count) {
-                    const [year, month, day] = dt.split("-").map(v => parseInt(v))
-                    if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
-                        alert("Please enter a valid date")
+                    if (dt === null) {
+                        alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
-                        Controller.getHotAndColdLocations(dt, count)
-                        .then((data) => {
-                            this.hottestLocations = data[0];
-                            this.coldestLocations = data[1];
-                            this.displayInfo = true;
-                        });
+                        const [year, month, day] = dt.split("-").map(v => parseInt(v))
+                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
+                            alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        } else {
+                            Controller.getHotAndColdLocations(dt, count)
+                            .then((data) => {
+                                this.hottestLocations = data[0];
+                                this.coldestLocations = data[1];
+                                this.displayInfo = true;
+                            });
+                        }
                     }
                 },
                 getNearbyStationsQuery(lat, lng) {
