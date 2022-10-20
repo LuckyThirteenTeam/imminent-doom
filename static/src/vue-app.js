@@ -31,10 +31,9 @@ class VueApp {
                             alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
                         } else {
                             Controller.getHotAndColdLocations(dt, count)
-                            .then(response => response.json())
                             .then((data) => {
-                                this.hottestLocations = data[0];
-                                this.coldestLocations = data[1];
+                                this.hottestLocations = data[0].json();
+                                this.coldestLocations = data[1].json();
                                 this.displayInfo = true;
                             });
                         }
