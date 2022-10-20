@@ -112,7 +112,7 @@ body {
 .header {
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 table {
@@ -130,5 +130,5 @@ thead td {
 }
 
 .coldest {
-  margin-top: 20px;
+  margin-top: 16px;
 }

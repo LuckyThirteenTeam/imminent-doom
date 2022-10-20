@@ -8,6 +8,9 @@ class Controller {
     }
 
     static getHotAndColdLocations(dt, count) {
+        // Promise.all([fetch('http://imminent-doom.ml/query?query=SELECT * FROM Weather LIMIT 10'), fetch('http://imminent-doom.ml/query?query=SELECT * FROM Location LIMIT 10')])
+        // .then((v) => {
+        // })
         // TODO: Implement query
         return Promise.resolve(
             [

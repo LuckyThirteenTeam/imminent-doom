@@ -17,7 +17,7 @@ class VueApp {
                     coldestLocations: [],
                     inDemoQuery: '',
                     inHCLDate: null,
-                    inHCLCount: 0,
+                    inHCLCount: 5,
                     userLocation: '',
                     displayInfo: false
                 }
@@ -30,12 +30,19 @@ class VueApp {
                     });
                 },
                 getHotAndColdLocations(dt, count) {
-                    Controller.getHotAndColdLocations(dt, count)
-                    .then((data) => {
-                        this.hottestLocations = data[0];
-                        this.coldestLocations = data[1];
-                        this.displayInfo = true;
-                    });
+                    const [year, month, day] = dt.split("-").map(v => parseInt(v))
+                    if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
+                        alert("Please enter a valid date")
+                    } else if (count < 5 || count > 100) {
+                        alert("Count must be less than 100 and greater than 5")
+                    } else {
+                        Controller.getHotAndColdLocations(dt, count)
+                        .then((data) => {
+                            this.hottestLocations = data[0];
+                            this.coldestLocations = data[1];
+                            this.displayInfo = true;
+                        });
+                    }
                 },
                 getNearbyStationsQuery(lat, lng) {
                     const uluru = { lat: -25.344, lng: 131.031 };
