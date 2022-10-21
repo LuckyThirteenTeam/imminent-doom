@@ -131,3 +131,16 @@ thead td {
 .coldest {
   margin-top: 16px;
 }
+
+.no-results {
+  color: rgb(116, 116, 116);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 80px;
+}
+
+.no-results i {
+  margin-bottom: 8px;
+}

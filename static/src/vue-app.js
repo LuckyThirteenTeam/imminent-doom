@@ -9,14 +9,13 @@ class VueApp {
         this.#app = Vue.createApp({
             data() {
                 return {
-                    state: 'real',
                     panelState: 1, // Temporarily set to 1, until nearby stations feature is implemented
                     hottestLocations: [],
                     coldestLocations: [],
                     inHCLDate: null,
                     inHCLCount: 5,
                     userLocation: '',
-                    displayInfo: false
+                    displayInfo: false,
                 }
             },
             methods: {
@@ -31,11 +30,11 @@ class VueApp {
                             alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
                         } else {
                             Controller.getHotAndColdLocations(dt, count)
-                            .then((data) => {
-                                this.hottestLocations = data[0].json();
-                                this.coldestLocations = data[1].json();
+                            .then(data => {
+                                this.hottestLocations = data[0];
+                                this.coldestLocations = data[1];
                                 this.displayInfo = true;
-                            });
+                            })
                         }
                     }
                 },
