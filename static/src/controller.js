@@ -5,18 +5,21 @@ class Controller {
         return [await hottest.json(), await coldest.json()]
     }
 
-    static getNearbyStationsQuery(lat, lng) {
-        // TODO: Implement query
-        return Promise.resolve(
-            [
-                { lat: -25.344, lng: 131.031 }, // Data will also contain other station fields
-                { lat: -23.344, lng: 132.031 },
-                { lat: -21.344, lng: 130.031 },
-                { lat: -20.344, lng: 128.031 },
-                { lat: -25.944, lng: 131.931 },
-            ]
-        );
+    static async getNearbyStationsQuery(lat, lng) {
+        const nearby = await fetch(`query?query=SELECT locationId, latitude, longitude FROM Location WHERE latitude >= (${lat} - 1000) AND latitude <= (${lat} %2b 1000) AND longitude >= (${lng} - 1000) AND longitude <= (${lng} %2b 1000);`)
+        return await nearby.json();
     }
+
+    static async getStationInfo(locationId) {
+        const station = await fetch(`query?query=SELECT * FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE Location.locationId = ${locationId} ORDER BY date ASC;`)
+        return await station.json();
+    }
+
+    static async getUserCoords(location) {
+        const coords = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyBK8yskeJGABTnzoT6Q8AVcoGuzwQ9v6nQ`)
+        return await coords.json();
+    }
+
 }
 
 export { Controller }
