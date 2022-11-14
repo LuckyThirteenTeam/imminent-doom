@@ -1,11 +1,20 @@
 import mysql.connector
 from flask import Flask, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index_site():
     with open('index.html', 'r') as f:
+        site = f.read()
+
+    return site
+
+@app.route("/sample")
+def sample():
+    with open('sample_backup.sql', 'r') as f:
         site = f.read()
 
     return site
@@ -21,8 +30,8 @@ def query():
     cursor = cnx.cursor()
     try:
         cursor.execute(q)
-    except:
-        return '[]'
+    except Exception as e:
+        return '[[%s]]' % str(e)
 
     l = []
     for row in cursor:
