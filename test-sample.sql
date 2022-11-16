@@ -33,5 +33,5 @@ JOIN Weather as w ON w.locationId = AvgTemps.locationId
 WHERE date = '2022-01-03'
 ORDER BY diffTemps DESC;
 
-INSERT INTO SavedLocation VALUES ("user", 71039099999);
+INSERT INTO SavedLocation VALUES ("user", "71039099999");
 SELECT * FROM SavedLocation;
