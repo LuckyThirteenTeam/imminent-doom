@@ -100,16 +100,16 @@
 				<!-- Station Info -->
 				<div v-if="outputPanelState === 1 && stationInfo.length !== 0">
 					<div class="station-info">
-						Station {{ stationInfo[stationIndex][1] }}: {{ stationInfo[stationIndex][11] }}, {{ stationInfo[stationIndex][12] }}
+						Station {{ stationInfo[stationIndex][0] }}: {{ stationInfo[stationIndex][10] }}, {{ stationInfo[stationIndex][11] }}
 					</div>
 					<div class="country">
 						<i class="fa-solid fa-earth-americas"></i>
-						{{ stationInfo[stationIndex][10] }}
+						{{ stationInfo[stationIndex][9] }}
 					</div>
 					
 					<div class="station-info-header">
 						<i class="fa-regular fa-calendar"></i>
-						Date ({{ stationInfo[stationIndex][0] }})
+						Date ({{ stationInfo[stationIndex][1] }})
 						<input class="date-slider" v-model="stationIndex" type="range" step="1" min="0" :max="stationInfo.length - 1">
 					</div>
 
