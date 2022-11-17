@@ -26,7 +26,7 @@ def query():
     q = args['query']
     if 'drop' in q.lower():
         return 'no'
-    cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='sample')
+    cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
     cursor = cnx.cursor()
     try:
         cursor.execute(q)
