@@ -14,10 +14,6 @@ WHERE date = "2022-10-16"
 ORDER BY minTemp ASC 
 LIMIT 5;
 
-SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = "2022-10-16" ORDER BY maxTemp DESC LIMIT 5;
-
-SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = "2022-10-16" ORDER BY minTemp ASC LIMIT 5;
-
 SELECT locationId, latitude, longitude 
 FROM Location
 WHERE latitude >= (48.0 - 1) AND latitude <= (48.0 + 1) AND longitude >= (-71.0 - 1) AND longitude <= (-71.0 + 1);
