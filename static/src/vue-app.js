@@ -33,6 +33,34 @@ class VueApp {
                 }
             },
             methods: {
+                renderMarkers(coords, markers) {
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 6,
+                        center: coords,
+                    });
+                    markers.forEach(marker => {
+                        const mapMarker = new google.maps.Marker({
+                            position: {lat: parseInt(marker[1]), lng: parseInt(marker[2])},
+                            map: map,
+                            locationId: marker[0]
+                        });
+                        mapMarker.addListener("click", () => {
+                            Controller.getStationInfo(mapMarker.locationId)
+                            .then(data => {
+                                this.stationInfo = data;
+                                this.outputPanelState = 1;
+                                this.error = false;
+                            })
+                            .catch(_ => {
+                                this.outputPanelState = 1;
+                                this.error = true;
+                            })
+                        });
+                    })
+                },
+                goToStation(lat, lng) {
+                    map.setCenter({ lat: parseInt(lat), lng: parseInt(lng) });
+                },
                 async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
                         alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
@@ -48,6 +76,17 @@ class VueApp {
                             .then(data => {
                                 this.hottestLocations = data[0];
                                 this.coldestLocations = data[1];
+                                let userCoords = {}
+                                if (data[0].length != 0) {
+                                    userCoords = { lat: parseInt([data[0][0][3]]), lng: parseInt([data[0][0][4]])}
+                                } else if (data[1].length != 0) {
+                                    userCoords = { lat: parseInt([data[1][0][3]]), lng: parseInt([data[1][0][4]])}
+                                }
+                                if (Object.keys(userCoords).length !== 0) {
+                                    const markers = data[0].map(loc => [loc[1], loc[3], loc[4]])
+                                        .concat(data[1].map(loc => [loc[1], loc[3], loc[4]]))
+                                    this.renderMarkers(userCoords, markers)
+                                }
                                 this.error = false;
                             })
                             .catch(_ => {
@@ -56,47 +95,17 @@ class VueApp {
                         }
                     }
                 },
-                async getNearbyStationsQuery(lat, lng) {
+                async getNearbyStationsQuery() {
                     Controller.getUserCoords(this.userLocation)
-                    .then((data) => {
+                    .then(async (data) => {
                         const userCoords = data.results[0].geometry.location;
-                        map = new google.maps.Map(document.getElementById("map"), {
-                            zoom: 6,
-                            center: userCoords,
-                        });
-                        
-                        Controller.getNearbyStationsQuery(lat, lng)
-                        .then((data) => {
-                            this.outputPanelState = 0;
-                            this.nearbyStations = data;
-
-                            for (let i = 0; i < data.length; i++) {
-                                const marker = new google.maps.Marker({
-                                    position: {lat: parseInt([data[i][1]]), lng: parseInt([data[i][2]])},
-                                    map: map,
-                                    locationId: data[i][0]
-                                });
-                                marker.addListener("click", () => {
-                                    Controller.getStationInfo(marker.locationId)
-                                    .then(data => {
-                                        this.stationInfo = data;
-                                        this.outputPanelState = 1;
-                                        this.error = false;
-                                    })
-                                    .catch(_ => {
-                                        this.outputPanelState = 1;
-                                        this.error = true;
-                                    })
-                                });
-                            }
-                        });
+                        this.nearbyStations = await Controller.getNearbyStationsQuery(userCoords.lat, userCoords.lng)
+                        this.outputPanelState = 0;
+                        this.renderMarkers(userCoords, this.nearbyStations)
                     })
                     .catch(_ => {
                         alert("Please enter a valid location")
                     });
-                },
-                goToStation(lat, lng) {
-                    map.setCenter({ lat: parseInt(lat), lng: parseInt(lng) });
                 }
             }
         });
