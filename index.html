@@ -33,8 +33,8 @@
 						Anomalies
 					</button>
 					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3, 'temp-disabled': true }">
-						<i class="fa fa-xl fa-bookmark"></i>
-						Saved
+						<i class="fa fa-xl fa-user"></i>
+						Account
 					</button>
 				</div>
 				<div>
@@ -42,7 +42,7 @@
 						Enter a location to view nearby weather stations with historical climate data
 						<div class="panel-input-boxes">
 							<input class="panel-input input-location" type="text" v-model="userLocation">
-							<button class="panel-input-button" @click="getNearbyStationsQuery(48.3000, -71.1170)">
+							<button class="panel-input-button" @click="getNearbyStationsQuery()">
 								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
 							</button>
 						</div>
@@ -76,25 +76,31 @@
 			<!-- Info panel -->
 			<div class="panel bottom-panel" v-if="outputPanelState !== -1">
 				<!-- Nearby Stations -->
-				<div v-if="outputPanelState === 0 && nearbyStations.length !== 0">
-					<div class="header">
-						<i class="fa-solid fa-warehouse"></i>
-						Nearby Stations ({{ nearbyStations.length }})
+				<div v-if="outputPanelState === 0">
+					<div class="no-results" v-if="error || nearbyStations.length === 0">
+						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
+						No nearby stations found, please try another location.
 					</div>
-					<table>
-						<thead>
-							<tr>
-								<td>Station</td>
-								<td>Latitude</td>
-								<td>Longitude</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="nearby-station" @click="goToStation(row[1], row[2])" v-for="(row, index) in nearbyStations">
-								<td v-for="data in row">{{ data }}</td>
-							</tr>
-						</tbody>
-					</table>
+					<div v-if="nearbyStations.length !== 0">
+						<div class="header">
+							<i class="fa-solid fa-warehouse"></i>
+							Nearby Stations ({{ nearbyStations.length }})
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Station</td>
+									<td>Latitude</td>
+									<td>Longitude</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="nearby-station" @click="goToStation(row[1], row[2])" v-for="(row, index) in nearbyStations">
+									<td v-for="data in row">{{ data }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 
 				<!-- Station Info -->
@@ -204,9 +210,11 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="(row, index) in hottestLocations">
+								<tr class="nearby-station" v-for="(row, index) in hottestLocations" @click="goToStation(row[3], row[4])">
 									<td>{{ index + 1 }}</td>
-									<td v-for="data in row">{{ data }}</td>
+									<td>{{ row[0] }}</td>
+									<td>{{ row[1] }}</td>
+									<td>{{ row[2] }}</td>
 								</tr>
 							</tbody>
 						</table>
@@ -226,9 +234,11 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="(row, index) in coldestLocations">
+								<tr class="nearby-station" v-for="(row, index) in coldestLocations" @click="goToStation(row[3], row[4])">
 									<td>{{ index + 1 }}</td>
-									<td v-for="data in row">{{ data }}</td>
+									<td>{{ row[0] }}</td>
+									<td>{{ row[1] }}</td>
+									<td>{{ row[2] }}</td>
 								</tr>
 							</tbody>
 						</table>

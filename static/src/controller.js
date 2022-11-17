@@ -1,12 +1,12 @@
 class Controller {
     static async getHotAndColdLocations(dt, count) {
-        const hottest = await fetch(`query?query=SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY maxTemp DESC LIMIT ${count};`)
-        const coldest = await fetch(`query?query=SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY minTemp ASC LIMIT ${count};`)
+        const hottest = await fetch(`query?query=SELECT country, Weather.locationId, maxTemp, latitude, longitude FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' AND maxTemp != 9999.9 ORDER BY maxTemp DESC LIMIT ${count};`)
+        const coldest = await fetch(`query?query=SELECT country, Weather.locationId, minTemp, latitude, longitude FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' AND minTemp != 9999.9 ORDER BY minTemp ASC LIMIT ${count};`)
         return [await hottest.json(), await coldest.json()]
     }
 
     static async getNearbyStationsQuery(lat, lng) {
-        const nearby = await fetch(`query?query=SELECT locationId, latitude, longitude FROM Location WHERE latitude >= (${lat} - 1000) AND latitude <= (${lat} %2b 1000) AND longitude >= (${lng} - 1000) AND longitude <= (${lng} %2b 1000);`)
+        const nearby = await fetch(`query?query=SELECT locationId, latitude, longitude FROM Location WHERE latitude >= (${lat} - 1) AND latitude <= (${lat} %2b 1) AND longitude >= (${lng} - 1) AND longitude <= (${lng} %2b 1);`)
         return await nearby.json();
     }
 
@@ -19,7 +19,6 @@ class Controller {
         const coords = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyBK8yskeJGABTnzoT6Q8AVcoGuzwQ9v6nQ`)
         return await coords.json();
     }
-
 }
 
 export { Controller }
