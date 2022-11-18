@@ -42,8 +42,8 @@ def query():
 @app.get("/nearby-stations")
 def nearby_stations():
     args = request.args
-    lat = args['lat']
-    lng = args['lng']
+    lat = float(args['lat'])
+    lng = float(args['lng'])
     cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
     cursor = cnx.cursor()
     try:
