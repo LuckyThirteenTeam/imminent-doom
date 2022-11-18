@@ -50,7 +50,6 @@ def nearby_stations():
     cursor = cnx.cursor()
     try:
         cursor.execute("""
-            DELIMITER $$
             CREATE FUNCTION `haversine` (lat1 FLOAT, lng1 FLOAT, lat2 FLOAT, lng2 FLOAT) RETURNS FLOAT
             BEGIN
                 DECLARE R INT;
@@ -71,8 +70,7 @@ def nearby_stations():
                 SET c = 2 * ATAN2( SQRT( a ), SQRT( 1 - a ) );
                 SET d = R * c;
                 RETURN d;
-            END $$
-            DELIMITER;
+            END
 
             SELECT locationId, latitude, longitude, haversine(latitude, {lat}, longitude, {lng}) AS distance FROM Location
             WHERE haversine(latitude, {lat}, longitude, {lng}) IS NOT NULL
@@ -86,4 +84,3 @@ def nearby_stations():
         l.append(row)
     cnx.close()
     return l
-    
