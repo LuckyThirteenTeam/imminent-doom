@@ -15,7 +15,7 @@ ORDER BY minTemp ASC
 LIMIT 5;
 
 DELIMITER $$
-CREATE FUNCTION `haversine` (lat1 DECIMAL(8,6), lng1 DECIMAL(8,6), lat2 DECIMAL(8,6), lng2 DECIMAL(8,6)) RETURNS DECIMAL(8,6)
+CREATE FUNCTION `haversine` (lat1 FLOAT, lng1 FLOAT, lat2 FLOAT, lng2 FLOAT) RETURNS FLOAT
 BEGIN
     DECLARE R INT;
     DECLARE dLat DECIMAL(30,15);
@@ -38,6 +38,11 @@ BEGIN
 END $$
 DELIMITER ;
 
+SELECT locationId, latitude, longitude, haversine(latitude, 32.0, longitude, -87.0) AS distance FROM Location
+WHERE haversine(latitude, 32.0, longitude, -87.0) IS NOT NULL
+ORDER BY distance ASC
+LIMIT 10;
+
 SELECT w.locationId, w.meanTemp, AvgTemps.avgTemp, ABS(w.meanTemp - AvgTemps.avgTemp) AS diffTemps
 FROM (
 SELECT sum(meanTemp)/count(meanTemp) as avgTemp, locationId
@@ -50,4 +55,14 @@ WHERE date = '2022-01-03' and w.meanTemp != 9999.9
 ORDER BY diffTemps DESC limit 10;
 
 INSERT INTO SavedLocation VALUES ("user", "71956199999");
+SELECT * FROM SavedLocation;
+
+SELECT *
+FROM Weather NATURAL JOIN Location
+WHERE locationId = "71040099999"
+ORDER BY date ASC
+LIMIT 10;
+
+DELETE FROM SavedLocation
+WHERE username = "user" AND locationId = "71956199999";
 SELECT * FROM SavedLocation;
