@@ -6,7 +6,7 @@ class Controller {
     }
 
     static async getNearbyStationsQuery(lat, lng) {
-        const nearby = await fetch(`nearby-stations?lat=${lat}&lng=${lng}`)
+        const nearby = await fetch(`query?query=SELECT locationId, latitude, longitude, haversine(latitude, ${lat}, longitude, ${lng}) AS distance FROM Location WHERE haversine(latitude, ${lat}, longitude, ${lng}) IS NOT NULL ORDER BY distance ASC LIMIT 10;`)
         return await nearby.json();
     }
 
