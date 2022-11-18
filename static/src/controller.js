@@ -6,7 +6,7 @@ class Controller {
     }
 
     static async getNearbyStationsQuery(lat, lng) {
-        const nearby = await fetch(`query?query=SELECT locationId, latitude, longitude FROM Location WHERE latitude >= (${lat} - 1) AND latitude <= (${lat} %2b 1) AND longitude >= (${lng} - 1) AND longitude <= (${lng} %2b 1);`)
+        const nearby = await fetch(`nearby-stations?lat=${lat}&lng=${lng}`)
         return await nearby.json();
     }
 

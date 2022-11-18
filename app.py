@@ -39,3 +39,51 @@ def query():
     cnx.close()
     return l
 
+@app.get("/nearby-stations")
+def nearby_stations():
+    args = request.args
+    print("HERE")
+    lat = args['lat']
+    lng = args['lng']
+    print(lat, lng)
+    cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
+    cursor = cnx.cursor()
+    try:
+        cursor.execute("""
+            DELIMITER $$
+            CREATE FUNCTION `haversine` (lat1 FLOAT, lng1 FLOAT, lat2 FLOAT, lng2 FLOAT) RETURNS FLOAT
+            BEGIN
+                DECLARE R INT;
+                DECLARE dLat DECIMAL(30,15);
+                DECLARE dLng DECIMAL(30,15);
+                DECLARE a1 DECIMAL(30,15);
+                DECLARE a2 DECIMAL(30,15);
+                DECLARE a DECIMAL(30,15);
+                DECLARE c DECIMAL(30,15);
+                DECLARE d DECIMAL(30,15);
+            
+                SET R = 3959; -- Earth's radius in miles
+                SET dLat = RADIANS( lat2 ) - RADIANS( lat1 );
+                SET dLng = RADIANS( lng2 ) - RADIANS( lng1 );
+                SET a1 = SIN( dLat / 2 ) * SIN( dLat / 2 );
+                SET a2 = SIN( dLng / 2 ) * SIN( dLng / 2 ) * COS( RADIANS( lng1 )) * COS( RADIANS( lat2 ) );
+                SET a = a1 + a2;
+                SET c = 2 * ATAN2( SQRT( a ), SQRT( 1 - a ) );
+                SET d = R * c;
+                RETURN d;
+            END $$
+            DELIMITER;
+
+            SELECT locationId, latitude, longitude, haversine(latitude, {lat}, longitude, {lng}) AS distance FROM Location
+            WHERE haversine(latitude, {lat}, longitude, {lng}) IS NOT NULL
+            ORDER BY distance ASC
+            LIMIT 10;""")
+    except Exception as e:
+        return '[[%s]]' % str(e)
+
+    l = []
+    for row in cursor:
+        l.append(row)
+    cnx.close()
+    return l
+    
