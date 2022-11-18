@@ -1,21 +1,23 @@
 class Controller {
     static async getHotAndColdLocations(dt, count) {
-        const hottest = await fetch(`query?query=SELECT country, Weather.locationId, maxTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY maxTemp DESC LIMIT ${count};`)
-        const coldest = await fetch(`query?query=SELECT country, Weather.locationId, minTemp FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' ORDER BY minTemp ASC LIMIT ${count};`)
+        const hottest = await fetch(`query?query=SELECT country, Weather.locationId, maxTemp, latitude, longitude FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' AND maxTemp != 9999.9 ORDER BY maxTemp DESC LIMIT ${count};`)
+        const coldest = await fetch(`query?query=SELECT country, Weather.locationId, minTemp, latitude, longitude FROM Weather JOIN Location ON Weather.locationId = Location.locationId WHERE date = '${dt}' AND minTemp != 9999.9 ORDER BY minTemp ASC LIMIT ${count};`)
         return [await hottest.json(), await coldest.json()]
     }
 
-    static getNearbyStationsQuery(lat, lng) {
-        // TODO: Implement query
-        return Promise.resolve(
-            [
-                { lat: -25.344, lng: 131.031 }, // Data will also contain other station fields
-                { lat: -23.344, lng: 132.031 },
-                { lat: -21.344, lng: 130.031 },
-                { lat: -20.344, lng: 128.031 },
-                { lat: -25.944, lng: 131.931 },
-            ]
-        );
+    static async getNearbyStationsQuery(lat, lng) {
+        const nearby = await fetch(`nearby-stations?lat=${lat}&lng=${lng}`)
+        return await nearby.json();
+    }
+
+    static async getStationInfo(locationId) {
+        const station = await fetch(`query?query=SELECT * FROM Weather NATURAL JOIN Location WHERE Location.locationId = ${locationId} ORDER BY date ASC;`)
+        return await station.json();
+    }
+
+    static async getUserCoords(location) {
+        const coords = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyBK8yskeJGABTnzoT6Q8AVcoGuzwQ9v6nQ`)
+        return await coords.json();
     }
 }
 
