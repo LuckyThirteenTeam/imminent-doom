@@ -26,19 +26,19 @@ BEGIN
     DECLARE c DECIMAL(30,15);
     DECLARE d DECIMAL(30,15);
 
-    SET R = 3959; -- Earth's radius in miles
-    SET dLat = RADIANS( lat2 ) - RADIANS( lat1 );
-    SET dLng = RADIANS( lng2 ) - RADIANS( lng1 );
+    SET R = 6563; -- Earth's radius in km
+    SET dLat = lat2 - lat1;
+    SET dLng = lng2 - lng1;
     SET a1 = SIN( dLat / 2 ) * SIN( dLat / 2 );
-    SET a2 = SIN( dLng / 2 ) * SIN( dLng / 2 ) * COS( RADIANS( lat1 )) * COS( RADIANS( lat2 ) );
+    SET a2 = SIN( dLng / 2 ) * SIN( dLng / 2 ) * COS( lat1 ) * COS( lat2 );
     SET a = a1 + a2;
-    SET c = 2 * ATAN2( SQRT( a ), SQRT( 1 - a ) );
+    SET c = 2 * ASIN( SQRT( a ) );
     SET d = R * c;
     RETURN d;
 END $$
 DELIMITER ;
 
-SELECT locationId, latitude, longitude, haversine(latitude, 32.0, longitude, -87.0) AS distance FROM Location
+SELECT locationId, latitude, longitude, GetDistance(latitude, 32.0, longitude, 32.0) AS distance FROM Location
 WHERE haversine(latitude, 32.0, longitude, -87.0) IS NOT NULL
 ORDER BY distance ASC
 LIMIT 10;
