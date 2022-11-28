@@ -63,9 +63,9 @@ def read_pepper():
 def signup():
     args = request.args
     if 'username' not in args:
-        return 'Username Required', 401
+        return 'Username Required', 400
     if 'password' not in args:
-        return 'Password Required', 401
+        return 'Password Required', 400
 
     username = args['username']
     password = args['password']
@@ -102,9 +102,9 @@ def signup():
 def login():
     args = request.args
     if 'username' not in args:
-        return 'Username Required', 401
+        return 'Username Required', 400
     if 'password' not in args:
-        return 'Password Required', 401
+        return 'Password Required', 400
     username = args['username']
     password = args['password']
 
@@ -159,3 +159,44 @@ def saved_locations():
         l.append(row)
     cnx.close()
     return l
+
+@app.post("/save_location")
+def save_location():
+    args = request.args
+    if 'username' not in session:
+        return 'Not Logged In', 401
+    if 'locationId' not in args:
+        return 'Location ID Required', 400
+    username = session['username']
+    locid = args['locationId']
+
+    cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
+    cursor = cnx.cursor()
+    try:
+        cursor.execute('INSERT INTO SavedLocation VALUES (%s, %s)', [username, locid])
+        cnx.commit()
+    except Exception as e:
+        return '[[%s]]' % str(e)
+    
+    return 'Success'
+
+@app.post("/delete_saved_location")
+def delete_saved_location():
+    args = request.args
+    if 'username' not in session:
+        return 'Not Logged In', 401
+    if 'locationId' not in args:
+        return 'Location ID Required', 400
+    username = session['username']
+    locid = args['locationId']
+
+    cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
+    cursor = cnx.cursor()
+    try:
+        cursor.execute('DELETE FROM SavedLocation WHERE username = %s AND locationId = %s', [username, locid])
+        cnx.commit()
+    except Exception as e:
+        return '[[%s]]' % str(e)
+    
+    return 'Success'
+
