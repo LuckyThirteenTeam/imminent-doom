@@ -3,3 +3,5 @@ __pycache__
 log.txt
 flask_log.txt
 sample_backup.sql
+.secret_key
+.pepper
