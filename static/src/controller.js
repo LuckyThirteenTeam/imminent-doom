@@ -26,12 +26,12 @@ class Controller {
     }
 
     static async login(username, password) {
-        const login = await fetch(`login?username='${username}'&password='${password}'`, { method: 'POST' })
+        const login = await fetch(`login?username=${username}&password=${password}`, { method: 'POST' })
         return login
     }
 
     static async signup(username, password) {
-        const signup = await fetch(`signup?username='${username}'&password='${password}'`, { method: 'POST' })
+        const signup = await fetch(`signup?username=${username}&password=${password}`, { method: 'POST' })
         return signup
     }
 

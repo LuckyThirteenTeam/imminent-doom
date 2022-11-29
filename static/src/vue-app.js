@@ -196,9 +196,9 @@ class VueApp {
             async mounted(){
                 Controller.getUsername()
                     .then(async data => {
-                        let username = await data.text()
-                        if (username !== "") {
-                            this.username = username
+                        let user = await data.text()
+                        if (user !== "") {
+                            this.username = user
                             this.loggedIn = true
                         }
                     })
