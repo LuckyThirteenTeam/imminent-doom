@@ -21,7 +21,7 @@ class Controller {
     }
 
     static async getAnomalies(dt, count) {
-        const anomalies = await fetch(`query?query=SELECT w.locationId, w.meanTemp, AvgTemps.avgTemp, ABS(w.meanTemp - AvgTemps.avgTemp) AS diffTemps FROM (SELECT sum(meanTemp)/count(*) as avgTemp, locationId FROM Weather WHERE date LIKE '%${dt.substring(5)}' GROUP BY locationId) as AvgTemps JOIN Weather as w ON w.locationId = AvgTemps.locationId WHERE date = '${dt}' ORDER BY diffTemps DESC LIMIT ${count};`)
+        const anomalies = await fetch(`query?query=SELECT l.country, w.locationId, l.latitude, l.longitude, w.meanTemp, AvgTemps.avgTemp, ABS(w.meanTemp - AvgTemps.avgTemp) AS diffTemps FROM (SELECT sum(meanTemp)/count(*) as avgTemp, locationId FROM Weather WHERE date LIKE '%25${dt.substring(5)}' GROUP BY locationId) as AvgTemps JOIN Location as l ON AvgTemps.locationId = l.locationId JOIN Weather as w ON w.locationId = AvgTemps.locationId WHERE date = '${dt}' ORDER BY diffTemps DESC LIMIT ${count};`)
         return await anomalies.json()
     }
 

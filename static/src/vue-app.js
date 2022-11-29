@@ -27,6 +27,7 @@ class VueApp {
                     coldestLocations: [],
                     anomalies: [],
                     date: null,
+                    displayedDate: null,
                     count: 5,
                     userLocation: '',
                     nearbyStations: [],
@@ -70,13 +71,15 @@ class VueApp {
                 },
                 async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
-                        alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
+                        this.displayedDate = dt
                         const [year, month, day] = dt.split("-").map(v => parseInt(v))
-                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
-                            alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                            (year === 2022 && month === 10 && day > 17)) {
+                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                         } else {
                             this.outputPanelState = 2;
                             Controller.getHotAndColdLocations(dt, count)
@@ -116,13 +119,15 @@ class VueApp {
                 },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
-                        alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
+                        this.displayedDate = dt
                         const [year, month, day] = dt.split("-").map(v => parseInt(v))
-                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
-                            alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                            (year === 2022 && month === 10 && day > 17)) {
+                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                         } else {
                             this.outputPanelState = 3;
                             Controller.getAnomalies(dt, count)
@@ -130,11 +135,10 @@ class VueApp {
                                 this.anomalies = data;
                                 let userCoords = {}
                                 if (data.length !== 0) {
-                                    userCoords = { lat: parseInt([data[0][3]]), lng: parseInt([data[0][4]])}
+                                    userCoords = { lat: parseInt([data[0][2]]), lng: parseInt([data[0][3]])}
                                 }
                                 if (Object.keys(userCoords).length !== 0) {
-                                    const markers = data[0].map(loc => [loc[1], loc[3], loc[4]])
-                                        .concat(data[1].map(loc => [loc[1], loc[3], loc[4]]))
+                                    const markers = data.map(loc => [loc[1], loc[2], loc[3]])
                                     this.renderMarkers(userCoords, markers)
                                 }
                                 this.error = false;
