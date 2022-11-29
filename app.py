@@ -32,6 +32,11 @@ def query():
     q = args['query']
     if 'drop' in q.lower():
         return 'no'
+
+    print('Query:')
+    print(q)
+    print()
+
     cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
     cursor = cnx.cursor()
     try:
@@ -140,6 +145,18 @@ def login():
     cnx.close()
     session['username'] = username
     return 'Logged In'
+
+@app.get("/username")
+def is_logged_in():
+    if 'username' in session:
+        return session['username']
+    return ''
+
+@app.post("/logout")
+def logout():
+    if 'username' in session:
+        session.pop('username')
+    return 'Logged out'
 
 @app.get("/saved_locations")
 def saved_locations():
