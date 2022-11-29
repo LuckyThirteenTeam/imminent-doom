@@ -21,14 +21,16 @@ class VueApp {
                 return {
                     panelState: 0,
                     outputPanelState: -1,
+                    savedLocations: [],
                     hottestLocations: [],
                     coldestLocations: [],
                     inHCLDate: null,
                     inHCLCount: 5,
                     userLocation: '',
                     nearbyStations: [],
-                    stationInfo: [],
+                    stationInfo: [], 
                     stationIndex: 0,
+                    isSavedStation: false,
                     error: false
                 }
             },
@@ -49,6 +51,7 @@ class VueApp {
                             .then(data => {
                                 this.stationInfo = data;
                                 this.outputPanelState = 1;
+                                this.isSavedStation = this.savedLocations.includes(mapMarker.locationId);
                                 this.error = false;
                             })
                             .catch(_ => {
