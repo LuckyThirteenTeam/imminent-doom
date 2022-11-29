@@ -28,11 +28,11 @@
 						<i class="fa fa-xl fa-solid fa-thermometer"></i>
 						Hot/Cold
 					</button>
-					<button @click="panelState = 2" class="button" v-bind:class="{ active: panelState === 2, 'temp-disabled': true }">
+					<button @click="panelState = 2" class="button" v-bind:class="{ active: panelState === 2 }">
 						<i class="fa fa-xl fa-solid fa-arrow-down-up-across-line"></i>
 						Anomalies
 					</button>
-					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3, 'temp-disabled': true }">
+					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3 }">
 						<i class="fa fa-xl fa-user"></i>
 						Account
 					</button>
@@ -50,9 +50,9 @@
 					<div class="panel-input-container" v-if="panelState === 1">
 						Enter a date and the number of locations to view the hottest/coldest locations on that date
 						<div class="panel-input-boxes">
-							<input class="panel-input" type="date" min="2000-01-02" max="2022-10-16" v-model="inHCLDate">
-							<input class="panel-input input-num" type="number" min="5" max="100" v-model="inHCLCount">
-							<button class="panel-input-button" @click="getHotAndColdLocations(inHCLDate, inHCLCount)">
+							<input class="panel-input" type="date" min="2000-01-02" max="2022-10-16" v-model="date">
+							<input class="panel-input input-num" type="number" min="5" max="100" v-model="count">
+							<button class="panel-input-button" @click="getHotAndColdLocations(date, count)">
 								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
 							</button>
 						</div>
@@ -60,15 +60,42 @@
 					<div class="panel-input-container" v-if="panelState === 2">
 						Enter a date and the number of locations to view the locations with temperatures furthest from their all-time average temperature on that date
 						<div class="panel-input-boxes">
-							<input class="panel-input" type="date" v-model="inHCLDate">
-							<input class="panel-input input-num" type="number" v-model="inHCLCount">
-							<button class="panel-input-button" @click="getHotAndColdLocations(inHCLDate, inHCLCount)">
+							<input class="panel-input" type="date" v-model="date">
+							<input class="panel-input input-num" min="5" max="100" type="number" v-model="count">
+							<button class="panel-input-button" @click="getAnomalies(date, count)">
 								<i class="fa-xl fa-solid fa-magnifying-glass"></i>
 							</button>
 						</div>
 					</div>
 					<div class="panel-input-container" v-if="panelState === 3">
-						Manage saved weather stations
+						<div class="panel-input-container" v-if="loggedIn">
+							Hi {{username}}! Save weather stations and manage them below.
+							<button @click="logout()" class="login-button" style="margin-top: 8px">
+								Logout
+							</button>
+						</div>
+						<div class="panel-input-container" v-if="!loggedIn">
+							<div v-if="!signupPage">
+								Login to manage your saved weather stations. Don't have an account? 
+								<span style="cursor: pointer; color: rgba(45, 142, 221, 0.8)" @click="signupPage = true">Sign up here!</span>
+							</div>
+							<div v-if="signupPage">
+								Sign up to manage your saved weather stations. Already have an account?
+								<span style="cursor: pointer; color: rgba(45, 142, 221, 0.8)" @click="signupPage = false">Login here!</span>
+							</div>
+							<input class="panel-input" style="width: 100%; margin-bottom: 0;" placeholder="Username" type="text" v-model="username">
+							<input class="panel-input" style="width: 100%;" type="password" placeholder="Password" v-model="password">
+							<div v-if="!signupPage">
+								<button @click="login(username, password)" class="login-button">
+									Login
+								</button>
+							</div>
+							<div v-if="signupPage">
+								<button @click="signup(username, password)" class="login-button">
+									Sign up
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -192,13 +219,13 @@
 				<div v-if="outputPanelState === 2">
 					<div class="no-results" v-if="error || (hottestLocations.length === 0 && coldestLocations.length === 0)">
 						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
-						No locations found for {{ inHCLDate }}, please try another date.
+						No locations found for {{ date }}, please try another date.
 					</div>
 
 					<div v-if="hottestLocations.length !== 0">
 						<div class="header">
 							<i class="fa-solid fa-fire"></i>
-							Hottest Locations on {{ inHCLDate }}
+							Hottest Locations on {{ date }}
 						</div>
 						<table>
 							<thead>
@@ -222,7 +249,7 @@
 					<div class="coldest" v-if="coldestLocations.length !== 0">
 						<div class="header">
 							<i class="fa-solid fa-snowflake"></i>
-							Coldest Locations on {{ inHCLDate }}
+							Coldest Locations on {{ date }}
 						</div>
 						<table>
 							<thead>
@@ -243,6 +270,49 @@
 							</tbody>
 						</table>
 					</div>
+				</div>
+
+				<!-- Anomalies -->
+				<div v-if="outputPanelState === 3">
+					<div class="no-results" v-if="error || (hottestLocations.length === 0 && coldestLocations.length === 0)">
+						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
+						No locations found for {{ date }}, please try another date.
+					</div>
+
+					<div v-if="anomalies.length !== 0">
+						<div class="header">
+							<i class="fa-solid fa-arrow-down-up-across-line"></i>
+							Anomalies on {{ date }}
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Rank</td>
+									<td>Country</td>
+									<td>Location ID</td>
+									<td>Temp (°F)</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="nearby-station" v-for="(row, index) in anomalies" @click="goToStation(row[3], row[4])">
+									<td>{{ index + 1 }}</td>
+									<td>{{ row[0] }}</td>
+									<td>{{ row[1] }}</td>
+									<td>{{ row[2] }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Saved Locations -->
+				<div v-if="outputPanelState === 4">
+					<div class="no-results" v-if="error || (hottestLocations.length === 0 && coldestLocations.length === 0)">
+						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
+						No saved locations.
+					</div>
+
+					Saved locations go here
 				</div>
 			</div>
 		</div>
