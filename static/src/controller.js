@@ -19,6 +19,21 @@ class Controller {
         const coords = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyBK8yskeJGABTnzoT6Q8AVcoGuzwQ9v6nQ`)
         return await coords.json();
     }
+
+    static async getSavedLocations() {
+        const res = await fetch(`saved_locations`);
+        return await res.json();
+    }
+
+    static async saveLocation(locationId) {
+        const res = await fetch(`save_location?locationId=${locationId}`);
+        return await res.json();
+    }
+
+    static async deleteSavedLocation(locationId) {
+        const res = await fetch(`delete_saved_location?locationId=${locationId}`);
+        return await res.json();
+    }
 }
 
 export { Controller }
