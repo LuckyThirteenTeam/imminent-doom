@@ -120,6 +120,7 @@ class VueApp {
                         alert("Please enter a valid location")
                     });
                 },
+                // Load saved location data from database to JS, but don't do anything else.
                 async loadSavedLocations() {
                     await Controller.getSavedLocations()
                     .then(data => {
@@ -129,6 +130,7 @@ class VueApp {
                         this.savedLocations = [];
                     });
                 },
+                // Load saved location data and set up corresponding map markers.
                 getSavedLocations() {
                     this.loadSavedLocations()
                     .then(_ => {
@@ -176,6 +178,7 @@ class VueApp {
                         alert('Action unsuccessful - please try again.')
                     });
                 },
+                // Either save or unsave the specified location, depending on the save state.
                 saveButtonClicked(locationId) {
                     if (this.isSavedStation) {
                         this.deleteSavedLocation(locationId);
