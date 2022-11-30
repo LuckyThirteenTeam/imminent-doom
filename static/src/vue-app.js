@@ -59,7 +59,7 @@ class VueApp {
                             .then(data => {
                                 this.stationInfo = data;
                                 this.outputPanelState = 1;
-                                this.isSavedStation = this.savedLocations.includes(mapMarker.locationId);
+                                this.isSavedStation = this.savedLocations.some((elem) => (elem[1] === mapMarker.locationId));
                                 this.error = false;
                             })
                             .catch(_ => {
@@ -120,14 +120,31 @@ class VueApp {
                         alert("Please enter a valid location")
                     });
                 },
-                loadSavedLocations() {
-                    Controller.getSavedLocations()
+                async loadSavedLocations() {
+                    await Controller.getSavedLocations()
                     .then(data => {
                         this.savedLocations = data;
                     })
                     .catch(_ => {
                         this.savedLocations = [];
                     });
+                },
+                getSavedLocations() {
+                    this.loadSavedLocations()
+                    .then(_ => {
+                        let userCoords = {}
+                        if (this.savedLocations.length !== 0) {
+                            userCoords = { lat: parseInt([this.savedLocations[0][2]]), lng: parseInt([this.savedLocations[0][3]])}
+                        }
+                        if (Object.keys(userCoords).length !== 0) {
+                            const markers = this.savedLocations.map(loc => [loc[1], loc[2], loc[3]])
+                            this.renderMarkers(userCoords, markers)
+                        }
+                        this.error = false;
+                    })
+                    .catch(_ => {
+                        this.error = true;
+                    })
                 },
                 saveLocation(locationId) {
                     Controller.saveLocation(locationId)
