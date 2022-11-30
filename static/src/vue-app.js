@@ -147,7 +147,17 @@ class VueApp {
                     });
                 },
                 deleteSavedLocation(locationId) {
-                    this.loadSavedLocations();
+                    Controller.deleteSavedLocation(locationId)
+                    .then(async data => {
+                        if (data.status === 200) {
+                            this.loadSavedLocations();
+                        } else {
+                            alert('Action unsuccessful - please try again.');
+                        }
+                    })
+                    .catch(_ => {
+                        alert('Action unsuccessful - please try again.')
+                    });
                 },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
