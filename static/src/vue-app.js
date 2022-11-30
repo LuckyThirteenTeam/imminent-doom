@@ -71,7 +71,7 @@ class VueApp {
                     });
                     markers.forEach(marker => {
                         const mapMarker = new google.maps.Marker({
-                            position: {lat: parseInt(marker[1]), lng: parseInt(marker[2])},
+                            position: {lat: parseFloat(marker[1]), lng: parseFloat(marker[2])},
                             map: map,
                             locationId: marker[0]
                         });
@@ -91,7 +91,7 @@ class VueApp {
                     })
                 },
                 goToStation(lat, lng) {
-                    map.setCenter({ lat: parseInt(lat), lng: parseInt(lng) });
+                    map.setCenter({ lat: parseFloat(lat), lng: parseFloat(lng) });
                 },
                 async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
@@ -100,7 +100,7 @@ class VueApp {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
                         this.displayedDate = dt
-                        const [year, month, day] = dt.split("-").map(v => parseInt(v))
+                        const [year, month, day] = dt.split("-").map(v => parseFloat(v))
                         if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
                             (year === 2022 && month === 10 && day > 17)) {
                             alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
@@ -112,9 +112,9 @@ class VueApp {
                                 this.coldestLocations = data[1];
                                 let userCoords = {}
                                 if (data[0].length !== 0) {
-                                    userCoords = { lat: parseInt([data[0][0][3]]), lng: parseInt([data[0][0][4]])}
+                                    userCoords = { lat: parseFloat([data[0][0][3]]), lng: parseFloat([data[0][0][4]])}
                                 } else if (data[1].length !== 0) {
-                                    userCoords = { lat: parseInt([data[1][0][3]]), lng: parseInt([data[1][0][4]])}
+                                    userCoords = { lat: parseFloat([data[1][0][3]]), lng: parseFloat([data[1][0][4]])}
                                 }
                                 if (Object.keys(userCoords).length !== 0) {
                                     const markers = data[0].map(loc => [loc[1], loc[3], loc[4]])
@@ -157,7 +157,7 @@ class VueApp {
                     .then(_ => {
                         let userCoords = {}
                         if (this.savedLocations.length !== 0) {
-                            userCoords = { lat: parseInt([this.savedLocations[0][2]]), lng: parseInt([this.savedLocations[0][3]])}
+                            userCoords = { lat: parseFloat([this.savedLocations[0][2]]), lng: parseFloat([this.savedLocations[0][3]])}
                         }
                         if (Object.keys(userCoords).length !== 0) {
                             const markers = this.savedLocations.map(loc => [loc[1], loc[2], loc[3]])
@@ -214,7 +214,7 @@ class VueApp {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
                         this.displayedDate = dt
-                        const [year, month, day] = dt.split("-").map(v => parseInt(v))
+                        const [year, month, day] = dt.split("-").map(v => parseFloat(v))
                         if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
                             (year === 2022 && month === 10 && day > 17)) {
                             alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
@@ -225,7 +225,7 @@ class VueApp {
                                 this.anomalies = data;
                                 let userCoords = {}
                                 if (data.length !== 0) {
-                                    userCoords = { lat: parseInt([data[0][2]]), lng: parseInt([data[0][3]])}
+                                    userCoords = { lat: parseFloat([data[0][2]]), lng: parseFloat([data[0][3]])}
                                 }
                                 if (Object.keys(userCoords).length !== 0) {
                                     const markers = data.map(loc => [loc[1], loc[2], loc[3]])
