@@ -3,7 +3,7 @@ FROM Weather
 JOIN Location 
 ON Weather.locationId = Location.locationId 
 WHERE date = "2022-10-16" and maxTemp != 9999.9
-ORDER BY maxTemp DESC 
+ORDER BY maxTemp DESC
 LIMIT 5;
 
 SELECT country, Weather.locationId, minTemp
@@ -15,7 +15,7 @@ ORDER BY minTemp ASC
 LIMIT 5;
 
 DELIMITER $$
-CREATE FUNCTION `haversine` (lat1 FLOAT, lng1 FLOAT, lat2 FLOAT, lng2 FLOAT) RETURNS FLOAT
+CREATE FUNCTION `haversine` (lat1 FLOAT, lat2 FLOAT, lng1 FLOAT, lng2 FLOAT) RETURNS FLOAT
 BEGIN
     DECLARE R INT;
     DECLARE dLat DECIMAL(30,15);
@@ -26,7 +26,7 @@ BEGIN
     DECLARE c DECIMAL(30,15);
     DECLARE d DECIMAL(30,15);
 
-    SET R = 6563; -- Earth's radius in km
+    SET R = 6371; -- Earth's radius in km
     SET dLat = lat2 - lat1;
     SET dLng = lng2 - lng1;
     SET a1 = SIN( dLat / 2 ) * SIN( dLat / 2 );
