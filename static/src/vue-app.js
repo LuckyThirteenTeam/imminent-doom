@@ -58,6 +58,7 @@ class VueApp {
                 startAccountPanel() {
                     this.panelState = 3;
                     if (this.loggedIn) {
+                        this.getSavedLocations();
                         this.outputPanelState = 4;
                     } else {
                         this.outputPanelState = -1;
