@@ -11,7 +11,7 @@ class Controller {
     }
 
     static async getStationInfo(locationId) {
-        const station = await fetch(`query?query=SELECT * FROM Weather NATURAL JOIN Location WHERE Location.locationId = ${locationId} ORDER BY date ASC;`)
+        const station = await fetch(`query?query=SELECT * FROM Weather RIGHT OUTER JOIN Location ON Weather.locationId = Location.locationId WHERE Location.locationId = ${locationId} ORDER BY date ASC;`)
         return await station.json();
     }
 
