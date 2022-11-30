@@ -203,7 +203,7 @@
 					</table>
 
 					<br />
-					<button class="save-station" v-bind:class="{ saved: true }">
+					<button class="save-station" v-bind:class="{ saved: true }" @click="saveButtonClicked(stationInfo[stationIndex][0])">
 						<div v-if="isSavedStation">
 							<i class="fa-solid fa-bookmark"></i>
 							Saved

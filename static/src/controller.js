@@ -26,13 +26,13 @@ class Controller {
     }
 
     static async saveLocation(locationId) {
-        const res = await fetch(`save_location?locationId=${locationId}`);
-        return await res.json();
+        const res = await fetch(`save_location?locationId=${locationId}`, { method: 'POST' });
+        return await res;
     }
 
     static async deleteSavedLocation(locationId) {
-        const res = await fetch(`delete_saved_location?locationId=${locationId}`);
-        return await res.json();
+        const res = await fetch(`delete_saved_location?locationId=${locationId}`, { method: 'POST' });
+        return await res;
     }
 
     static async getAnomalies(dt, count) {

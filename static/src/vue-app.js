@@ -131,13 +131,26 @@ class VueApp {
                 },
                 saveLocation(locationId) {
                     Controller.saveLocation(locationId)
-                    .then(async data => {
-                        let res = await data.text()
+                    .then((data) => {
                         if (data.status === 200) {
                             this.loadSavedLocations();
                             this.isSavedStation = true;
-                        } else if (res === 'Not Logged In') {
+                        } else if (data.status === 401) {
                             alert('You must be logged in to save a location.');
+                        } else {
+                            alert('Action unsuccessful - please try again.');
+                        }
+                    })
+                    .catch(_ => {
+                        alert('Action unsuccessful - please try again.');
+                    });
+                },
+                deleteSavedLocation(locationId) {
+                    Controller.deleteSavedLocation(locationId)
+                    .then(async data => {
+                        if (data.status === 200) {
+                            this.loadSavedLocations();
+                            this.isSavedStation = false;
                         } else {
                             alert('Action unsuccessful - please try again.');
                         }
@@ -146,18 +159,12 @@ class VueApp {
                         alert('Action unsuccessful - please try again.')
                     });
                 },
-                deleteSavedLocation(locationId) {
-                    Controller.deleteSavedLocation(locationId)
-                    .then(async data => {
-                        if (data.status === 200) {
-                            this.loadSavedLocations();
-                        } else {
-                            alert('Action unsuccessful - please try again.');
-                        }
-                    })
-                    .catch(_ => {
-                        alert('Action unsuccessful - please try again.')
-                    });
+                saveButtonClicked(locationId) {
+                    if (this.isSavedStation) {
+                        this.deleteSavedLocation(locationId);
+                    } else {
+                        this.saveLocation(locationId);
+                    }
                 },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
