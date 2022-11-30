@@ -13,6 +13,8 @@ class VueApp {
      *    0 = Nearby stations
      *    1 = Station info
      *    2 = Hottest/coldest locations
+     *    3 = Anomalies
+     *    4 = Saved locations
      */
 
     static start() {
@@ -24,14 +26,20 @@ class VueApp {
                     savedLocations: [],
                     hottestLocations: [],
                     coldestLocations: [],
-                    inHCLDate: null,
-                    inHCLCount: 5,
+                    anomalies: [],
+                    date: null,
+                    displayedDate: null,
+                    count: 5,
                     userLocation: '',
                     nearbyStations: [],
                     stationInfo: [], 
                     stationIndex: 0,
                     isSavedStation: false,
-                    error: false
+                    error: false,
+                    loggedIn: false,
+                    signupPage: false,
+                    username: '',
+                    password: ''
                 }
             },
             methods: {
@@ -66,13 +74,15 @@ class VueApp {
                 },
                 async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
-                        alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
+                        this.displayedDate = dt
                         const [year, month, day] = dt.split("-").map(v => parseInt(v))
-                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0) {
-                            alert("Please enter a valid date between 1900-01-01 and 2022-10-16")
+                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                            (year === 2022 && month === 10 && day > 17)) {
+                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
                         } else {
                             this.outputPanelState = 2;
                             Controller.getHotAndColdLocations(dt, count)
@@ -80,9 +90,9 @@ class VueApp {
                                 this.hottestLocations = data[0];
                                 this.coldestLocations = data[1];
                                 let userCoords = {}
-                                if (data[0].length != 0) {
+                                if (data[0].length !== 0) {
                                     userCoords = { lat: parseInt([data[0][0][3]]), lng: parseInt([data[0][0][4]])}
-                                } else if (data[1].length != 0) {
+                                } else if (data[1].length !== 0) {
                                     userCoords = { lat: parseInt([data[1][0][3]]), lng: parseInt([data[1][0][4]])}
                                 }
                                 if (Object.keys(userCoords).length !== 0) {
@@ -124,10 +134,99 @@ class VueApp {
                 },
                 deleteSavedLocation() {
                     
+                },
+                async getAnomalies(dt, count) {
+                    if (dt === null) {
+                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                    } else if (count < 5 || count > 100) {
+                        alert("Count must be less than 100 and greater than 5")
+                    } else {
+                        this.displayedDate = dt
+                        const [year, month, day] = dt.split("-").map(v => parseInt(v))
+                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                            (year === 2022 && month === 10 && day > 17)) {
+                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                        } else {
+                            this.outputPanelState = 3;
+                            Controller.getAnomalies(dt, count)
+                            .then(data => {
+                                this.anomalies = data;
+                                let userCoords = {}
+                                if (data.length !== 0) {
+                                    userCoords = { lat: parseInt([data[0][2]]), lng: parseInt([data[0][3]])}
+                                }
+                                if (Object.keys(userCoords).length !== 0) {
+                                    const markers = data.map(loc => [loc[1], loc[2], loc[3]])
+                                    this.renderMarkers(userCoords, markers)
+                                }
+                                this.error = false;
+                            })
+                            .catch(_ => {
+                                this.error = true;
+                            })
+                        }
+                    }
+                },
+                async login(username, password) {
+                    Controller.login(username, password)
+                    .then(async data => {
+                        let res = await data.text()
+                        if (res === "User Not Found") {
+                            alert("Login unsuccessful - username does not exist.")
+                        } else if (res === "Incorrect Password") {
+                            alert("Login unsuccessful - incorrect password.")
+                        } else if (data.status === 401) {
+                            alert("Login unsuccessful - please try again.")
+                        } else {
+                            this.loggedIn = true
+                            this.outputPanelState = 4
+                        }
+                    })
+                    .catch(_ => {
+                        alert("Login unsuccessful - please try again.")
+                    });
+                },
+                async signup(username, password) {
+                    Controller.signup(username, password)
+                    .then(async data => {
+                        let res = await data.text()
+                        if (res === "User Already Exists") {
+                            alert("Sign up unsuccessful - username is already in use.")
+                        } else if (data.status === 401) {
+                            alert("Sign up unsuccessful - please try again.")
+                        } else {
+                            this.loggedIn = true
+                            this.outputPanelState = 4
+                        }
+                    })
+                    .catch(_ => {
+                        alert("Sign up unsuccessful - please try again.")
+                    });
+                },
+                async logout() {
+                    Controller.logout()
+                    .then(_ => {
+                        this.loggedIn = false
+                        this.panelState = 3
+                        this.outputPanelState = -1
+                    })
+                    .catch(_ => {
+                        alert("Logout unsuccessful - please try again.")
+                    });
                 }
             },
             created() {
                 loadSavedLocations();
+            },
+            async mounted() {
+                Controller.getUsername()
+                    .then(async data => {
+                        let user = await data.text()
+                        if (user !== "") {
+                            this.username = user
+                            this.loggedIn = true
+                        }
+                    })
             }
         });
         this.#app.mount(`#${this.#APP_ID}`);

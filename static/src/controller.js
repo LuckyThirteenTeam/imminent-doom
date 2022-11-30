@@ -34,6 +34,31 @@ class Controller {
         const res = await fetch(`delete_saved_location?locationId=${locationId}`);
         return await res.json();
     }
+
+    static async getAnomalies(dt, count) {
+        const anomalies = await fetch(`query?query=SELECT l.country, w.locationId, l.latitude, l.longitude, w.meanTemp, AvgTemps.avgTemp, ABS(w.meanTemp - AvgTemps.avgTemp) AS diffTemps FROM (SELECT sum(meanTemp)/count(*) as avgTemp, locationId FROM Weather WHERE date LIKE '%25${dt.substring(5)}' GROUP BY locationId) as AvgTemps JOIN Location as l ON AvgTemps.locationId = l.locationId JOIN Weather as w ON w.locationId = AvgTemps.locationId WHERE date = '${dt}' ORDER BY diffTemps DESC LIMIT ${count};`)
+        return await anomalies.json()
+    }
+
+    static async login(username, password) {
+        const login = await fetch(`login?username=${username}&password=${password}`, { method: 'POST' })
+        return login
+    }
+
+    static async signup(username, password) {
+        const signup = await fetch(`signup?username=${username}&password=${password}`, { method: 'POST' })
+        return signup
+    }
+
+    static async getUsername() {
+        const username = await fetch(`username`)
+        return username
+    }
+
+    static async logout() {
+        const logout = await fetch(`logout`, { method: 'POST' })
+        return logout
+    }
 }
 
 export { Controller }
