@@ -109,7 +109,25 @@ class VueApp {
                     .catch(_ => {
                         alert("Please enter a valid location")
                     });
+                },
+                loadSavedLocations() {
+                    Controller.getSavedLocations()
+                    .then(data => {
+                        this.savedLocations = data;
+                    })
+                    .catch(_ => {
+                        this.savedLocations = [];
+                    });
+                },
+                saveLocation() {
+
+                },
+                deleteSavedLocation() {
+                    
                 }
+            },
+            created() {
+                loadSavedLocations();
             }
         });
         this.#app.mount(`#${this.#APP_ID}`);
