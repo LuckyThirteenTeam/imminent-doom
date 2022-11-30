@@ -216,7 +216,7 @@ class VueApp {
                 }
             },
             created() {
-                loadSavedLocations();
+                this.loadSavedLocations();
             },
             async mounted() {
                 Controller.getUsername()
