@@ -43,6 +43,26 @@ class VueApp {
                 }
             },
             methods: {
+                startLocationPanel() {
+                    this.panelState = 0;
+                    this.outputPanelState = -1;
+                },
+                startHotColdPanel() {
+                    this.panelState = 1;
+                    this.outputPanelState = -1;
+                },
+                startAnomaliesPanel() {
+                    this.panelState = 2;
+                    this.outputPanelState = -1;
+                },
+                startAccountPanel() {
+                    this.panelState = 3;
+                    if (this.loggedIn) {
+                        this.outputPanelState = 4;
+                    } else {
+                        this.outputPanelState = -1;
+                    }
+                },
                 renderMarkers(coords, markers) {
                     map = new google.maps.Map(document.getElementById("map"), {
                         zoom: 6,

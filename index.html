@@ -20,19 +20,19 @@
 			<!-- Query panel -->
 			<div class="panel">
 				<div class="panel-buttons">
-					<button @click="panelState = 0" class="button" v-bind:class="{ active: panelState === 0 }">
+					<button @click="startLocationPanel" class="button" v-bind:class="{ active: panelState === 0 }">
 						<i class="fa fa-xl fa-solid fa-location-arrow"></i>
 						Location
 					</button>
-					<button @click="panelState = 1" class="button" v-bind:class="{ active: panelState === 1 }">
+					<button @click="startHotColdPanel" class="button" v-bind:class="{ active: panelState === 1 }">
 						<i class="fa fa-xl fa-solid fa-thermometer"></i>
 						Hot/Cold
 					</button>
-					<button @click="panelState = 2" class="button" v-bind:class="{ active: panelState === 2 }">
+					<button @click="startAnomaliesPanel" class="button" v-bind:class="{ active: panelState === 2 }">
 						<i class="fa fa-xl fa-solid fa-arrow-down-up-across-line"></i>
 						Anomalies
 					</button>
-					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3 }">
+					<button @click="startAccountPanel" class="button" v-bind:class="{ active: panelState === 3 }">
 						<i class="fa fa-xl fa-user"></i>
 						Account
 					</button>
