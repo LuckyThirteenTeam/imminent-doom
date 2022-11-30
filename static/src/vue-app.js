@@ -78,10 +78,16 @@ class VueApp {
                         mapMarker.addListener("click", () => {
                             Controller.getStationInfo(mapMarker.locationId)
                             .then(data => {
-                                this.stationInfo = data;
-                                this.outputPanelState = 1;
-                                this.isSavedStation = this.savedLocations.some((elem) => (elem[1] === mapMarker.locationId));
-                                this.error = false;
+                                if (data[0] === null) {
+                                    this.stationInfo = data;
+                                    this.outputPanelState = 1;
+                                    this.error = true;
+                                } else {
+                                    this.stationInfo = data;
+                                    this.outputPanelState = 1;
+                                    this.isSavedStation = this.savedLocations.some((elem) => (elem[1] === mapMarker.locationId));
+                                    this.error = false;
+                                }
                             })
                             .catch(_ => {
                                 this.outputPanelState = 1;
@@ -95,15 +101,15 @@ class VueApp {
                 },
                 async getHotAndColdLocations(dt, count) {
                     if (dt === null) {
-                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                        alert("Please enter a valid date between 2005-01-01 and 2022-10-17")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
                         this.displayedDate = dt
                         const [year, month, day] = dt.split("-").map(v => parseFloat(v))
-                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                        if (year > 2022 || year < 2005 || month > 12 || month === 0 || day > 31 || day === 0 || 
                             (year === 2022 && month === 10 && day > 17)) {
-                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                            alert("Please enter a valid date between 2005-01-01 and 2022-10-17")
                         } else {
                             this.outputPanelState = 2;
                             Controller.getHotAndColdLocations(dt, count)
@@ -209,15 +215,15 @@ class VueApp {
                 },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
-                        alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                        alert("Please enter a valid date between 2005-01-01 and 2022-10-17")
                     } else if (count < 5 || count > 100) {
                         alert("Count must be less than 100 and greater than 5")
                     } else {
                         this.displayedDate = dt
                         const [year, month, day] = dt.split("-").map(v => parseFloat(v))
-                        if (year > 2022 || year < 1900 || month > 12 || month === 0 || day > 31 || day === 0 || 
+                        if (year > 2022 || year < 2005 || month > 12 || month === 0 || day > 31 || day === 0 || 
                             (year === 2022 && month === 10 && day > 17)) {
-                            alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
+                            alert("Please enter a valid date between 2005-01-01 and 2022-10-17")
                         } else {
                             this.outputPanelState = 3;
                             Controller.getAnomalies(dt, count)
@@ -288,7 +294,14 @@ class VueApp {
                     .catch(_ => {
                         alert("Logout unsuccessful - please try again.")
                     });
-                }
+                },
+                checkValidValue(value) {
+                    let num = 0
+                    for(let i = 0; i < value.length; i++) {
+                        if (value[i] === "9") num++
+                    };
+                    return num < 4
+                },
             },
             created() {
                 this.loadSavedLocations();

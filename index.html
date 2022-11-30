@@ -139,80 +139,85 @@
 						<i class="fa-solid fa-earth-americas"></i>
 						{{ stationInfo[stationIndex][9] }}
 					</div>
-					
-					<div class="station-info-header">
-						<i class="fa-regular fa-calendar"></i>
-						Date ({{ stationInfo[stationIndex][1] }})
-						<input class="date-slider" v-model="stationIndex" type="range" step="1" min="0" :max="stationInfo.length - 1">
+					<div class="no-results" v-if="error">
+						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
+						No weather information found for station {{ stationInfo[stationIndex][0] }}.
 					</div>
-
-					<div class="station-info-header">
-						<i class="fa-solid fa-temperature-full"></i>
-						Temperature (°F)
-					</div>
-					<table>
-						<thead>
-							<tr>
-								<td>Average</td>
-								<td>Minimum</td>
-								<td>Maximum</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ stationInfo[stationIndex][2] }}</td>
-								<td>{{ stationInfo[stationIndex][7] }}</td>
-								<td>{{ stationInfo[stationIndex][8] }}</td>
-							</tr>
-						</tbody>
-					</table>
-
-					<div class="station-info-header">
-						<i class="fa-solid fa-cloud"></i>
-						Climate
-					</div>
-					<table>
-						<thead>
-							<tr>
-								<td>
-									Pressure <br />
-									(.1 mb)
-								</td>
-								<td>
-									Visibility <br />
-									(.1 miles)
-								</td>
-								<td>
-									Wind Speed <br />
-									(.1 knots)
-								</td>
-								<td>
-									Precipitation <br />
-									(.01 inches)
-								</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ stationInfo[stationIndex][3] }}</td>
-								<td>{{ stationInfo[stationIndex][5] }}</td>
-								<td>{{ stationInfo[stationIndex][6] }}</td>
-								<td>{{ stationInfo[stationIndex][4] }}</td>
-							</tr>
-						</tbody>
-					</table>
-
-					<br />
-					<button class="save-station" v-bind:class="{ saved: true }" @click="saveButtonClicked(stationInfo[stationIndex][0])">
-						<div v-if="isSavedStation">
-							<i class="fa-solid fa-bookmark"></i>
-							Saved
+					<div v-if="!error">
+						<div class="station-info-header">
+							<i class="fa-regular fa-calendar"></i>
+							Date ({{ stationInfo[stationIndex][1] }})
+							<input class="date-slider" v-model="stationIndex" type="range" step="1" min="0" :max="stationInfo.length - 1">
 						</div>
-						<div v-if="!isSavedStation">
-							<i class="fa-regular fa-bookmark"></i>
-							Save
+
+						<div class="station-info-header">
+							<i class="fa-solid fa-temperature-full"></i>
+							Temperature (°F)
 						</div>
-					</button>
+						<table>
+							<thead>
+								<tr>
+									<td>Average</td>
+									<td>Minimum</td>
+									<td>Maximum</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ checkValidValue(stationInfo[stationIndex][2]) ? stationInfo[stationIndex][2] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][7]) ? stationInfo[stationIndex][7] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][8]) ? stationInfo[stationIndex][8] : "-" }}</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="station-info-header">
+							<i class="fa-solid fa-cloud"></i>
+							Climate
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>
+										Pressure <br />
+										(.1 mb)
+									</td>
+									<td>
+										Visibility <br />
+										(.1 miles)
+									</td>
+									<td>
+										Wind Speed <br />
+										(.1 knots)
+									</td>
+									<td>
+										Precipitation <br />
+										(.01 inches)
+									</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ checkValidValue(stationInfo[stationIndex][3]) ? stationInfo[stationIndex][3] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][5]) ? stationInfo[stationIndex][5] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][6]) ? stationInfo[stationIndex][6] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][4]) ? stationInfo[stationIndex][4] : "-" }}</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<br />
+						<button class="save-station" v-bind:class="{ saved: true }" @click="saveButtonClicked(stationInfo[stationIndex][0])">
+							<div v-if="isSavedStation">
+								<i class="fa-solid fa-bookmark"></i>
+								Saved
+							</div>
+							<div v-if="!isSavedStation">
+								<i class="fa-regular fa-bookmark"></i>
+								Save
+							</div>
+						</button>
+					</div>
 				</div>
 
 				<!-- Hottest/Coldest Locations -->
