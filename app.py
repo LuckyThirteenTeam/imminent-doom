@@ -167,7 +167,7 @@ def saved_locations():
     cnx = mysql.connector.connect(user='user', password='password', host='127.0.0.1', database='production')
     cursor = cnx.cursor()
     try:
-        cursor.execute('SELECT locationId FROM SavedLocation WHERE username = %s', [username])
+        cursor.execute('SELECT country, locationId, latitude, longitude FROM (SavedLocation NATURAL JOIN Location) WHERE username = %s', [username])
     except Exception as e:
         return '[[%s]]' % str(e)
 

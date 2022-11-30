@@ -20,19 +20,19 @@
 			<!-- Query panel -->
 			<div class="panel">
 				<div class="panel-buttons">
-					<button @click="panelState = 0" class="button" v-bind:class="{ active: panelState === 0 }">
+					<button @click="startLocationPanel" class="button" v-bind:class="{ active: panelState === 0 }">
 						<i class="fa fa-xl fa-solid fa-location-arrow"></i>
 						Location
 					</button>
-					<button @click="panelState = 1" class="button" v-bind:class="{ active: panelState === 1 }">
+					<button @click="startHotColdPanel" class="button" v-bind:class="{ active: panelState === 1 }">
 						<i class="fa fa-xl fa-solid fa-thermometer"></i>
 						Hot/Cold
 					</button>
-					<button @click="panelState = 2" class="button" v-bind:class="{ active: panelState === 2 }">
+					<button @click="startAnomaliesPanel" class="button" v-bind:class="{ active: panelState === 2 }">
 						<i class="fa fa-xl fa-solid fa-arrow-down-up-across-line"></i>
 						Anomalies
 					</button>
-					<button @click="panelState = 3" class="button" v-bind:class="{ active: panelState === 3 }">
+					<button @click="startAccountPanel" class="button" v-bind:class="{ active: panelState === 3 }">
 						<i class="fa fa-xl fa-user"></i>
 						Account
 					</button>
@@ -139,80 +139,85 @@
 						<i class="fa-solid fa-earth-americas"></i>
 						{{ stationInfo[stationIndex][9] }}
 					</div>
-					
-					<div class="station-info-header">
-						<i class="fa-regular fa-calendar"></i>
-						Date ({{ stationInfo[stationIndex][1] }})
-						<input class="date-slider" v-model="stationIndex" type="range" step="1" min="0" :max="stationInfo.length - 1">
+					<div class="no-results" v-if="error">
+						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
+						No weather information found for station {{ stationInfo[stationIndex][0] }}.
 					</div>
-
-					<div class="station-info-header">
-						<i class="fa-solid fa-temperature-full"></i>
-						Temperature (°F)
-					</div>
-					<table>
-						<thead>
-							<tr>
-								<td>Average</td>
-								<td>Minimum</td>
-								<td>Maximum</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ stationInfo[stationIndex][2] }}</td>
-								<td>{{ stationInfo[stationIndex][7] }}</td>
-								<td>{{ stationInfo[stationIndex][8] }}</td>
-							</tr>
-						</tbody>
-					</table>
-
-					<div class="station-info-header">
-						<i class="fa-solid fa-cloud"></i>
-						Climate
-					</div>
-					<table>
-						<thead>
-							<tr>
-								<td>
-									Pressure <br />
-									(.1 mb)
-								</td>
-								<td>
-									Visibility <br />
-									(.1 miles)
-								</td>
-								<td>
-									Wind Speed <br />
-									(.1 knots)
-								</td>
-								<td>
-									Precipitation <br />
-									(.01 inches)
-								</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ stationInfo[stationIndex][3] }}</td>
-								<td>{{ stationInfo[stationIndex][5] }}</td>
-								<td>{{ stationInfo[stationIndex][6] }}</td>
-								<td>{{ stationInfo[stationIndex][4] }}</td>
-							</tr>
-						</tbody>
-					</table>
-
-					<br />
-					<button class="save-station" v-bind:class="{ saved: true }">
-						<div v-if="true">
-							<i class="fa-solid fa-bookmark"></i>
-							Saved
+					<div v-if="!error">
+						<div class="station-info-header">
+							<i class="fa-regular fa-calendar"></i>
+							Date ({{ stationInfo[stationIndex][1] }})
+							<input class="date-slider" v-model="stationIndex" type="range" step="1" min="0" :max="stationInfo.length - 1">
 						</div>
-						<div v-if="false">
-							<i class="fa-regular fa-bookmark"></i>
-							Save
+
+						<div class="station-info-header">
+							<i class="fa-solid fa-temperature-full"></i>
+							Temperature (°F)
 						</div>
-					</button>
+						<table>
+							<thead>
+								<tr>
+									<td>Average</td>
+									<td>Minimum</td>
+									<td>Maximum</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ checkValidValue(stationInfo[stationIndex][2]) ? stationInfo[stationIndex][2] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][7]) ? stationInfo[stationIndex][7] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][8]) ? stationInfo[stationIndex][8] : "-" }}</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="station-info-header">
+							<i class="fa-solid fa-cloud"></i>
+							Climate
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>
+										Pressure <br />
+										(.1 mb)
+									</td>
+									<td>
+										Visibility <br />
+										(.1 miles)
+									</td>
+									<td>
+										Wind Speed <br />
+										(.1 knots)
+									</td>
+									<td>
+										Precipitation <br />
+										(.01 inches)
+									</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ checkValidValue(stationInfo[stationIndex][3]) ? stationInfo[stationIndex][3] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][5]) ? stationInfo[stationIndex][5] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][6]) ? stationInfo[stationIndex][6] : "-" }}</td>
+									<td>{{ checkValidValue(stationInfo[stationIndex][4]) ? stationInfo[stationIndex][4] : "-" }}</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<br />
+						<button class="save-station" v-bind:class="{ saved: true }" @click="saveButtonClicked(stationInfo[stationIndex][0])">
+							<div v-if="isSavedStation">
+								<i class="fa-solid fa-bookmark"></i>
+								Saved
+							</div>
+							<div v-if="!isSavedStation">
+								<i class="fa-regular fa-bookmark"></i>
+								Save
+							</div>
+						</button>
+					</div>
 				</div>
 
 				<!-- Hottest/Coldest Locations -->
@@ -313,12 +318,34 @@
 
 				<!-- Saved Locations -->
 				<div v-if="outputPanelState === 4">
-					<div class="no-results" v-if="error || (hottestLocations.length === 0 && coldestLocations.length === 0)">
+					<div class="no-results" v-if="error || savedLocations.length === 0">
 						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
 						No saved locations.
 					</div>
-
-					Saved locations go here
+					<div v-else>
+						<div class="header">
+							<i class="fa-solid fa-bookmark"></i>
+							Saved Locations ({{ savedLocations.length }})
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Country</td>
+									<td>Location ID</td>
+									<td>Latitude</td>
+									<td>Longitude</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="nearby-station" v-for="row in savedLocations" @click="goToStation(row[2], row[3])">
+									<td>{{ row[0] }}</td>
+									<td>{{ row[1] }}</td>
+									<td>{{ row[2] }}</td>
+									<td>{{ row[3] }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
