@@ -227,7 +227,7 @@ class VueApp {
                             alert("Login unsuccessful - please try again.")
                         } else {
                             this.loggedIn = true;
-                            this.loadSavedLocations();
+                            this.getSavedLocations();
                             this.outputPanelState = 4;
                         }
                     })
@@ -244,6 +244,7 @@ class VueApp {
                         } else if (data.status === 401) {
                             alert("Sign up unsuccessful - please try again.")
                         } else {
+                            this.getSavedLocations();
                             this.loggedIn = true
                             this.outputPanelState = 4
                         }
