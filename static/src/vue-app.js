@@ -129,11 +129,11 @@ class VueApp {
                         this.savedLocations = [];
                     });
                 },
-                saveLocation() {
-
+                saveLocation(locationId) {
+                    this.loadSavedLocations();
                 },
-                deleteSavedLocation() {
-                    
+                deleteSavedLocation(locationId) {
+                    this.loadSavedLocations();
                 },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
@@ -178,8 +178,9 @@ class VueApp {
                         } else if (data.status === 401) {
                             alert("Login unsuccessful - please try again.")
                         } else {
-                            this.loggedIn = true
-                            this.outputPanelState = 4
+                            this.loggedIn = true;
+                            this.loadSavedLocations();
+                            this.outputPanelState = 4;
                         }
                     })
                     .catch(_ => {
@@ -207,6 +208,7 @@ class VueApp {
                     Controller.logout()
                     .then(_ => {
                         this.loggedIn = false
+                        this.savedLocations = [];
                         this.panelState = 3
                         this.outputPanelState = -1
                     })
