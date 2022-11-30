@@ -203,12 +203,12 @@
 					</table>
 
 					<br />
-					<button class="save-station" v-bind:class="{ saved: true }">
-						<div v-if="true">
+					<button class="save-station" v-bind:class="{ saved: true }" @click="saveButtonClicked(stationInfo[stationIndex][0])">
+						<div v-if="isSavedStation">
 							<i class="fa-solid fa-bookmark"></i>
 							Saved
 						</div>
-						<div v-if="false">
+						<div v-if="!isSavedStation">
 							<i class="fa-regular fa-bookmark"></i>
 							Save
 						</div>
@@ -313,12 +313,34 @@
 
 				<!-- Saved Locations -->
 				<div v-if="outputPanelState === 4">
-					<div class="no-results" v-if="error || (hottestLocations.length === 0 && coldestLocations.length === 0)">
+					<div class="no-results" v-if="error || savedLocations.length === 0">
 						<i class="fa-2x fa-solid fa-file-circle-exclamation"></i>
 						No saved locations.
 					</div>
-
-					Saved locations go here
+					<div v-else>
+						<div class="header">
+							<i class="fa-solid fa-bookmark"></i>
+							Saved Locations ({{ savedLocations.length }})
+						</div>
+						<table>
+							<thead>
+								<tr>
+									<td>Country</td>
+									<td>Location ID</td>
+									<td>Latitude</td>
+									<td>Longitude</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="nearby-station" v-for="row in savedLocations" @click="goToStation(row[2], row[3])">
+									<td>{{ row[0] }}</td>
+									<td>{{ row[1] }}</td>
+									<td>{{ row[2] }}</td>
+									<td>{{ row[3] }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

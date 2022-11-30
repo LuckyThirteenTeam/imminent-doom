@@ -23,6 +23,7 @@ class VueApp {
                 return {
                     panelState: 0,
                     outputPanelState: -1,
+                    savedLocations: [],
                     hottestLocations: [],
                     coldestLocations: [],
                     anomalies: [],
@@ -31,8 +32,9 @@ class VueApp {
                     count: 5,
                     userLocation: '',
                     nearbyStations: [],
-                    stationInfo: [],
+                    stationInfo: [], 
                     stationIndex: 0,
+                    isSavedStation: false,
                     error: false,
                     loggedIn: false,
                     signupPage: false,
@@ -57,6 +59,7 @@ class VueApp {
                             .then(data => {
                                 this.stationInfo = data;
                                 this.outputPanelState = 1;
+                                this.isSavedStation = this.savedLocations.some((elem) => (elem[1] === mapMarker.locationId));
                                 this.error = false;
                             })
                             .catch(_ => {
@@ -117,6 +120,72 @@ class VueApp {
                         alert("Please enter a valid location")
                     });
                 },
+                // Load saved location data from database to JS, but don't do anything else.
+                async loadSavedLocations() {
+                    await Controller.getSavedLocations()
+                    .then(data => {
+                        this.savedLocations = data;
+                    })
+                    .catch(_ => {
+                        this.savedLocations = [];
+                    });
+                },
+                // Load saved location data and set up corresponding map markers.
+                getSavedLocations() {
+                    this.loadSavedLocations()
+                    .then(_ => {
+                        let userCoords = {}
+                        if (this.savedLocations.length !== 0) {
+                            userCoords = { lat: parseInt([this.savedLocations[0][2]]), lng: parseInt([this.savedLocations[0][3]])}
+                        }
+                        if (Object.keys(userCoords).length !== 0) {
+                            const markers = this.savedLocations.map(loc => [loc[1], loc[2], loc[3]])
+                            this.renderMarkers(userCoords, markers)
+                        }
+                        this.error = false;
+                    })
+                    .catch(_ => {
+                        this.error = true;
+                    })
+                },
+                saveLocation(locationId) {
+                    Controller.saveLocation(locationId)
+                    .then((data) => {
+                        if (data.status === 200) {
+                            this.loadSavedLocations();
+                            this.isSavedStation = true;
+                        } else if (data.status === 401) {
+                            alert('You must be logged in to save a location.');
+                        } else {
+                            alert('Action unsuccessful - please try again.');
+                        }
+                    })
+                    .catch(_ => {
+                        alert('Action unsuccessful - please try again.');
+                    });
+                },
+                deleteSavedLocation(locationId) {
+                    Controller.deleteSavedLocation(locationId)
+                    .then(async data => {
+                        if (data.status === 200) {
+                            this.loadSavedLocations();
+                            this.isSavedStation = false;
+                        } else {
+                            alert('Action unsuccessful - please try again.');
+                        }
+                    })
+                    .catch(_ => {
+                        alert('Action unsuccessful - please try again.')
+                    });
+                },
+                // Either save or unsave the specified location, depending on the save state.
+                saveButtonClicked(locationId) {
+                    if (this.isSavedStation) {
+                        this.deleteSavedLocation(locationId);
+                    } else {
+                        this.saveLocation(locationId);
+                    }
+                },
                 async getAnomalies(dt, count) {
                     if (dt === null) {
                         alert("Please enter a valid date between 1900-01-01 and 2022-10-17")
@@ -160,8 +229,9 @@ class VueApp {
                         } else if (data.status === 401) {
                             alert("Login unsuccessful - please try again.")
                         } else {
-                            this.loggedIn = true
-                            this.outputPanelState = 4
+                            this.loggedIn = true;
+                            this.getSavedLocations();
+                            this.outputPanelState = 4;
                         }
                     })
                     .catch(_ => {
@@ -177,6 +247,7 @@ class VueApp {
                         } else if (data.status === 401) {
                             alert("Sign up unsuccessful - please try again.")
                         } else {
+                            this.getSavedLocations();
                             this.loggedIn = true
                             this.outputPanelState = 4
                         }
@@ -189,6 +260,7 @@ class VueApp {
                     Controller.logout()
                     .then(_ => {
                         this.loggedIn = false
+                        this.savedLocations = [];
                         this.panelState = 3
                         this.outputPanelState = -1
                     })
@@ -197,7 +269,10 @@ class VueApp {
                     });
                 }
             },
-            async mounted(){
+            created() {
+                this.loadSavedLocations();
+            },
+            async mounted() {
                 Controller.getUsername()
                     .then(async data => {
                         let user = await data.text()
