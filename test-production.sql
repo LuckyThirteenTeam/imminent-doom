@@ -1,3 +1,4 @@
+--- Feature 1 
 SELECT country, Weather.locationId, maxTemp
 FROM Weather 
 JOIN Location 
@@ -10,10 +11,11 @@ SELECT country, Weather.locationId, minTemp
 FROM Weather 
 JOIN Location 
 ON Weather.locationId = Location.locationId 
-WHERE date = "2022-10-16"
+WHERE date = "2022-10-16" and maxTemp != 9999.9
 ORDER BY minTemp ASC 
 LIMIT 5;
 
+--- Feature 2
 DELIMITER $$
 CREATE FUNCTION `haversine` (lat1 FLOAT, lat2 FLOAT, lng1 FLOAT, lng2 FLOAT) RETURNS FLOAT
 BEGIN
@@ -38,11 +40,12 @@ BEGIN
 END $$
 DELIMITER ;
 
-SELECT locationId, latitude, longitude, GetDistance(latitude, 32.0, longitude, 32.0) AS distance FROM Location
+SELECT locationId, latitude, longitude, haversine(latitude, 32.0, longitude, 32.0) AS distance FROM Location
 WHERE haversine(latitude, 32.0, longitude, -87.0) IS NOT NULL
 ORDER BY distance ASC
 LIMIT 10;
 
+--- Feature 3
 SELECT w.locationId, w.meanTemp, AvgTemps.avgTemp, ABS(w.meanTemp - AvgTemps.avgTemp) AS diffTemps
 FROM (
 SELECT sum(meanTemp)/count(meanTemp) as avgTemp, locationId
@@ -54,15 +57,21 @@ JOIN Weather as w ON w.locationId = AvgTemps.locationId
 WHERE date = '2022-01-03' and w.meanTemp != 9999.9
 ORDER BY diffTemps DESC limit 10;
 
+--- Feature 4
 INSERT INTO SavedLocation VALUES ("user", "71956199999");
 SELECT * FROM SavedLocation;
 
+--- Feature 5
 SELECT *
 FROM Weather NATURAL JOIN Location
 WHERE locationId = "71040099999"
 ORDER BY date ASC
 LIMIT 10;
 
+--- Feature 6
 DELETE FROM SavedLocation
 WHERE username = "user" AND locationId = "71956199999";
 SELECT * FROM SavedLocation;
+
+-- Fancy Feature 5
+CREATE INDEX LocationIndex ON Weather(locationId);
